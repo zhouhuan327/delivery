@@ -14,22 +14,29 @@ export const RouterMap = [
       {
         path: '/home',
         name: 'home',
-        meta: { title: '首页', icon: 'fa fa-home' },
-        component: () => import('@/views/About.vue')
+        meta: { title: '首页', icon: 'iconfont icon-xuanzhongshangcheng' },
+        component: () => import('@/views/Home.vue')
       }
     ]
   },
   {
-    path: '/',
-    name: 'Layout',
+    path: '/testroute',
+    name: 'testroute',
     component: Layout,
     hidden: true,
-    redirect: '/testroute',
+    meta: { title: '测试路由', icon: 'iconfont icon-peisong2' },
+    redirect: '/testroute1',
     children: [
       {
-        path: '/testroute',
-        name: "testroute",
-        meta: { title: '测试路由', icon: 'fa fa-home' },
+        path: '/testroute1',
+        name: "testroute1",
+        meta: { title: '测试路由2', icon: 'iconfont icon-peisong3' },
+        component: () => import('@/views/404.vue')
+      },
+      {
+        path: '/testroute2',
+        name: "testroute2",
+        meta: { title: '子菜单', icon: 'iconfont icon-zuobiao1' },
         component: () => import('@/views/Home.vue')
       }
     ]
@@ -49,7 +56,7 @@ export const RouterMap = [
 ]
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: 'hash',
   base: process.env.BASE_URL,
   routes: RouterMap
 })

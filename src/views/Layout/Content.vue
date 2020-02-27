@@ -7,7 +7,7 @@
 		<el-main>
 			<!-- 面包屑 -->
 			<div class="top">
-				<i @click="handleCollapse" class="fa fa-reorder"></i>
+				<i @click="handleCollapse" class="iconfont icon-cebianlan"></i>
 				<slot name="breadcrumb"></slot>
 			</div>
 			<!-- 页面内容 -->
@@ -63,6 +63,7 @@ export default {
 				font-size: 20px;
 				cursor: pointer;
 				padding-left: 16px;
+				padding-right: 16px;
 			}
 
 			.breadcrumb {

@@ -29,7 +29,7 @@ export default {
 	},
 	created() {
 		this.$store.dispatch('init')
-		console.log(this.$store.getters.getroutes)
+		// console.log(this.$store.getters.getroutes)
 	}
 }
 </script>

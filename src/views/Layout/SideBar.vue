@@ -63,10 +63,10 @@ export default {
 	}
 
 	i {
-		margin-right: 5px;
+		margin-right: 8px;
 		width: 24px;
 		text-align: center;
-		font-size: 18px;
+		font-size: 17px;
 	}
 }
 </style>

@@ -23,15 +23,19 @@ export default {
 	},
 	watch: {
 		$route(route) {
+			if (route.path.startsWith('/redirect/')) {
+				return
+			}
 			this.initBreadCrumbItems(route)
 		}
 	},
 	methods: {
 		initBreadCrumbItems(router) {
+			//root router
 			let breadCrumbItems = [
 				{
 					path: '/',
-					name: '首页'
+					title: '路线优化系统'
 				}
 			]
 			for (const index in router.matched) {
@@ -48,6 +52,7 @@ export default {
 				}
 			}
 			this.breadCrumbItems = breadCrumbItems
+			// console.log(breadCrumbItems)
 		}
 	}
 }

@@ -1,15 +1,23 @@
 <template>
-	<div class="home">dsfafs</div>
+	<div class="Home">
+		<Graph />
+	</div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
+import Graph from '@/components/RouteGraph/index'
 export default {
 	name: 'Home',
+	data() {
+		return {}
+	},
 	components: {
-		HelloWorld
+		Graph
 	}
 }
 </script>
+
+<style lang="scss" scoped>
+.Home {
+}
+</style>
