@@ -5,24 +5,31 @@
 </template>
 
 <script>
-import { data2 } from './testdata.js'
-import echart from 'echart'
+import echarts from 'echarts'
+import { options } from './config/default.js'
 export default {
 	name: 'route-graph',
 	data() {
 		return {
-			chartWidth: '500px',
-			chartHeight: '500px'
+			chartWidth: '1000px',
+			chartHeight: '600px'
 		}
 	},
 	components: {},
 	methods: {
 		drawGraph() {
-			let chart = echart.init(this.$refs.mychart)
+			let chart = echarts.init(this.$refs.mychart)
+			if (chart == undefined) {
+				console.log(`echarts init dom is failed`)
+				return
+			}
+
+			chart.setOption(options)
 		}
 	},
-	created() {
-		console.log(data2)
+	created() {},
+	mounted() {
+		this.drawGraph()
 	}
 }
 </script>

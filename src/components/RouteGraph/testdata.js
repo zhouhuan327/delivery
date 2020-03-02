@@ -31,14 +31,3 @@ const data2 = [
     { "name": "7", "x": "10.6", "y": "7.6", "qt": "1.7" },
     { "name": "8", "x": "8.6", "y": "8.4", "qt": "0.6" }
 ]
-const res = data2.map((item) => {
-    var obj = item
-    obj.x = obj.x * 10
-    obj.y = obj.y * 10
-    return {
-        name: obj.name,
-        x: obj.x,
-        y: obj.y
-    }
-})
-console.log(res)
