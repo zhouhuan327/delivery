@@ -34,9 +34,9 @@ export const RouterMap = [
         component: () => import('@/views/404.vue')
       },
       {
-        path: '/testroute2',
-        name: "testroute2",
-        meta: { title: '子菜单', icon: 'iconfont icon-zuobiao1' },
+        path: '/plan1',
+        name: "plan1",
+        meta: { title: 'plan1', icon: 'iconfont icon-zuobiao1' },
         component: () => import('@/views/Home.vue')
       }
     ]
