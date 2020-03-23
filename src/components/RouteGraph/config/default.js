@@ -153,7 +153,6 @@ function getData(data) {
 
     })
     return res
-
 }
 
 function getLinks(data) {
