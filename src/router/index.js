@@ -44,6 +44,12 @@ export const RouterMap = [
         name: "plan2",
         meta: { title: 'plan2', icon: 'iconfont icon-zuobiao1' },
         component: () => import('@/components/RouteGraph/index2.vue')
+      },
+      {
+        path: '/uploadtest',
+        name: "uploadtest",
+        meta: { title: 'Excel上传', icon: 'iconfont icon-zuobiao1' },
+        component: () => import('@/components/File/uploadTest.vue')
       }
     ]
 
