@@ -61,7 +61,7 @@ const getOptions = (links) => {
                     show: true
                 },
                 edgeSymbol: ['circle', 'arrow'],
-                edgeSymbolSize: [3, 5],
+                edgeSymbolSize: [3, 8],
                 edgeLabel: {
                     fontSize: 25
                 },

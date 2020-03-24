@@ -37,7 +37,7 @@ export const RouterMap = [
         path: '/plan1',
         name: "plan1",
         meta: { title: 'plan1', icon: 'iconfont icon-zuobiao1' },
-        component: () => import('@/views/Home.vue')
+        component: () => import('@/components/RouteGraph/index.vue')
       },
       {
         path: '/plan2',

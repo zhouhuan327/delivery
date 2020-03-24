@@ -13,7 +13,7 @@
               class="route-btn"
               v-for="item in linkData"
               :label="item"
-              :key="item.name"
+              :key="item.index"
             >
               <i class="el-icon-setting"></i>
               {{ item.name }}</el-checkbox-button
@@ -23,8 +23,8 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="18"><div ref="mychart" class="chart"></div></el-col>
-      <el-col :span="6">
+      <el-col :span="16"><div ref="mychart" class="chart"></div></el-col>
+      <el-col :span="8">
         <p>route info here</p>
         <p>route info here</p>
         <p>route info here</p>
@@ -47,7 +47,8 @@ const colorMap = [
 const testlink = [
   { name: '车1', value: [1, 6, 5, 4, 3, 2, 1], index: 0 },
   { name: '车2', value: [1, 10, 1, 6, 5, 4, 3, 1], index: 1 },
-  { name: '车3', value: [1, 9, 8, 7, 1], index: 2 }
+  { name: '车3', value: [1, 9, 8, 7, 1], index: 2 },
+  { name: '车4', value: [1, 10, 9, 8, 1], index: 3 }
 ]
 export default {
   name: 'route-graph',
@@ -121,8 +122,7 @@ export default {
     }
   }
   .chart {
-    width: 60vw;
-    height: 60vh;
+    height: 70vh;
   }
   .el-checkbox-button {
     margin: 2px;

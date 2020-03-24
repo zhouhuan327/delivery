@@ -1,19 +1,19 @@
 <template>
-	<div class="Home">
-		<Graph />
-	</div>
+  <div class="Home">
+    <Graph />
+  </div>
 </template>
 
 <script>
-import Graph from '@/components/RouteGraph/index'
+import Graph from '@/components/RouteGraph/index2'
 export default {
-	name: 'Home',
-	data() {
-		return {}
-	},
-	components: {
-		Graph
-	}
+  name: 'Home',
+  data() {
+    return {}
+  },
+  components: {
+    Graph
+  }
 }
 </script>
 
