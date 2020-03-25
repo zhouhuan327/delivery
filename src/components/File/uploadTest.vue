@@ -1,6 +1,6 @@
 <template>
   <div class="upload">
-    <el-row>
+    <el-row class="bar">
       <el-button
         class="file"
         size="medium"
@@ -12,6 +12,31 @@
         <input type="file" id="excel-file" @change="updateFile" />
       </el-button>
     </el-row>
+    <el-row>
+      <el-col :span="20">
+        <el-table :data="tableData" border height="450" :show-header="true">
+          <el-table-column prop="name" label="客户点" width="150">
+          </el-table-column>
+          <el-table-column prop="x" label="横坐标x(km)" width="180">
+          </el-table-column>
+          <el-table-column prop="y" label="纵坐标y(km)" width="180">
+          </el-table-column>
+          <el-table-column prop="qt" label="需求量q(t)" width="200">
+          </el-table-column>
+          <el-table-column label="操作" width="120">
+            <template slot-scope="scope">
+              <el-button
+                @click.native.prevent="deleteRow(scope.$index, tableData)"
+                type="text"
+                size="small"
+              >
+                移除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -21,7 +46,8 @@ export default {
   name: '',
   data() {
     return {
-      isLoading: false
+      isLoading: false,
+      tableData: []
     }
   },
   methods: {
@@ -45,9 +71,24 @@ export default {
         })
 
         console.log('sheets: ', sheets)
+
+        this.tableData = this.formatterSheets(sheets[0].data)
       }
       reader.readAsArrayBuffer(files)
       setTimeout(() => (this.isLoading = false), 500)
+    },
+    formatterSheets(data) {
+      return data.map(item => {
+        return {
+          name: item['客户点'],
+          x: item['横坐标'],
+          y: item['纵坐标'],
+          qt: item['需求量']
+        }
+      })
+    },
+    deleteRow(index, rows) {
+      rows.splice(index, 1)
     }
   }
 }
@@ -55,6 +96,9 @@ export default {
 
 <style lang="scss" scoped>
 .upload {
+  .bar {
+    margin-bottom: 10px;
+  }
   .file {
     position: relative;
     cursor: pointer;
