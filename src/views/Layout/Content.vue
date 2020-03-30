@@ -47,6 +47,8 @@ export default {
 
   .el-main {
     padding: 0;
+    padding-bottom: 50px;
+    margin-bottom: 50px;
     width: 100%;
     position: relative;
     overflow-x: hidden;
@@ -72,7 +74,7 @@ export default {
     }
 
     .content {
-      padding: 15px;
+      padding: 20px;
       height: calc(100% - 54px);
       box-sizing: border-box;
     }
