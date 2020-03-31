@@ -69,7 +69,8 @@
         </el-table>
       </div>
       <el-col :span="20">
-        <template v-for="tableData in tableDatas">
+        <!-- 节点 -->
+        <template v-for="tableData in tableDataCoo">
           <span class="table-title" :key="tableData.SheetName + 1">
             <i class="el-icon-edit-outline"></i>
             {{ tableData.SheetName }}
@@ -98,6 +99,46 @@
             </el-table-column>
           </el-table>
         </template>
+        <!-- 距离 -->
+        <template v-for="tableData in tableDataDis">
+          <span class="table-title" :key="tableData.SheetName + 1">
+            <i class="el-icon-edit-outline"></i>
+            {{ tableData.SheetName }}
+          </span>
+          <el-table
+            class="table"
+            :data="tableData.data"
+            :key="tableData.SheetName"
+            height="350"
+            highlight-current-row
+          >
+            <el-table-column prop="name" label="name"> </el-table-column>
+            <template v-for="(item, index) in tableData.data">
+              <el-table-column
+                :key="index"
+                :prop="String(index)"
+                :label="String(index)"
+              >
+              </el-table-column>
+            </template>
+          </el-table>
+          <!-- 各点的需求 -->
+          <el-table
+            :data="tableData.qtdata"
+            :key="tableData.qtdata[0].name"
+            highlight-current-row
+          >
+            <el-table-column prop="需求量" label="配送点"></el-table-column>
+            <template v-for="(item, index) in tableData.qtdata[0]">
+              <el-table-column
+                :key="index"
+                :prop="String(index)"
+                :label="index"
+              >
+              </el-table-column>
+            </template>
+          </el-table>
+        </template>
       </el-col>
     </el-row>
     <el-row>
@@ -108,38 +149,45 @@
     </el-row>
 
     <el-dialog
-      title="请选择导入的类型"
+      title="请选择导入的类型(按照格式)"
       :visible.sync="isShowDialog"
-      width="30%"
+      width="50%"
       center
     >
-      <el-button
-        class="file"
-        size="medium"
-        :loading="isLoading"
-        plain
-        type="primary"
-      >
-        <input type="file" id="excel-file" @change="uploadFromCoodinate" />
-        <span>坐标</span>
-      </el-button>
-
-      <el-button
-        class="file"
-        size="medium"
-        :loading="isLoading"
-        plain
-        type="primary"
-      >
-        <input type="file" id="excel-file" @change="uploadFromDistance" />
-        <span>距离</span>
-      </el-button>
+      <el-row class="format-img">
+        <el-col :span="12">
+          <el-button
+            class="file"
+            size="medium"
+            :loading="isLoading"
+            plain
+            type="primary"
+          >
+            <input type="file" id="excel-file" @change="uploadFromCoodinate" />
+            <span>坐标</span>
+          </el-button>
+          <img src="../../assets/coodinate.jpg" alt="" />
+        </el-col>
+        <el-col :span="12">
+          <el-button
+            class="file"
+            size="medium"
+            :loading="isLoading"
+            plain
+            type="primary"
+          >
+            <input type="file" id="excel-file" @change="uploadFromDistance" />
+            <span>距离</span>
+          </el-button>
+          <img src="../../assets/distance.jpg" alt="" />
+        </el-col>
+      </el-row>
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="isShowDialog = false">取 消</el-button>
-        <el-button type="primary" @click="isShowDialog = false"
+        <!-- <el-button type="primary" @click="isShowDialog = false"
           >确 定</el-button
-        >
+        > -->
       </span>
     </el-dialog>
   </div>
@@ -153,7 +201,8 @@ export default {
     return {
       isLoading: false,
       isShowDialog: false,
-      tableDatas: [], //导入excel时的表格数据
+      tableDataCoo: [], // 要展示坐标数据，
+      tableDataDis: [], // 要展示的距离数据
       isShowForm: true, //手动输入的表格
       formData: {
         name: 1,
@@ -210,7 +259,9 @@ export default {
   },
   methods: {
     uploadFromCoodinate(ev) {
-      this.tableDatas = []
+      //初始化table
+      this.tableDataCoo = []
+      this.tableDataDis = []
       this.isLoading = true
       const sheets = []
       let files = ev.target.files[0]
@@ -225,25 +276,83 @@ export default {
           )
           sheets.push({
             SheetName: item,
-            data: jsonData
+            data: jsonData,
+            type: 'coodinate'
           })
         })
         this.isShowForm = false
-        this.tableDatas = sheets.map(item => {
+        this.tableDataCoo = sheets.map(item => {
           return {
             SheetName: item.SheetName,
             data: this.formatterSheets(item.data)
           }
         })
-        console.log(this.tableDatas)
+        console.log('coo final', this.tableDataCoo)
         ev.target.value = '' //解决onchange只触发一次的问题
-        // this.tableData = this.formatterSheets(sheets[0].data)
       }
       reader.readAsArrayBuffer(files)
+
       this.isShowDialog = false
       setTimeout(() => (this.isLoading = false), 500)
     },
-    uploadFromDistance(ev) {},
+    uploadFromDistance(ev) {
+      //初始化table
+      this.tableDataCoo = []
+      this.tableDataDis = []
+      const sheets = []
+      let files = ev.target.files[0]
+      let reader = new FileReader()
+      reader.onload = e => {
+        let data = e.target.result //=> return ArrayBuffer
+        let wb = XLSX.read(data, { type: 'array' })
+        wb.SheetNames.forEach((item, index) => {
+          let jsonData = XLSX.utils.sheet_to_json(
+            wb.Sheets[wb.SheetNames[index]]
+          )
+          console.log('d - json', jsonData)
+
+          // let distanceArray = []
+          // let qtArray = []
+          // //! 将节点关系转化成二维数组
+          // jsonData.some((row, rowindex) => {
+          //   if (row.name == 'T') {
+          //     return true
+          //   }
+          //   let arr = Object.values(row)
+          //   // arr.pop()
+          //   distanceArray.push(arr)
+          // })
+          // //!将需求量转换为数组
+          // let qt = Object.values(jsonData).pop() //jsondata的最后一个属性，表示需求量
+          // qtArray = Object.values(qt)
+          // qtArray.pop()
+
+          let distanceData = []
+          let qtdata = []
+          jsonData.some(item => {
+            if (item.name == 'T') {
+              return true
+            }
+            distanceData.push(item)
+          })
+
+          qtdata.push(jsonData[jsonData.length - 1])
+          delete qtdata[0].name
+          sheets.push({
+            SheetName: item,
+            data: distanceData,
+            qtdata: qtdata,
+            type: 'distance'
+          })
+        })
+        this.tableDataDis = sheets
+        console.log('distance final', this.tableDataDis)
+        ev.target.value = '' //解决onchange只触发一次的问题
+      }
+      this.isShowForm = false
+      reader.readAsArrayBuffer(files)
+      this.isShowDialog = false
+    },
     formatterSheets(data) {
       return data.map(item => {
         return {
@@ -255,10 +364,12 @@ export default {
       })
     },
     deleteRow(index, rows) {
-      rows.splice(index, 1)
+      rows.data.splice(index, 1)
     },
     showForm() {
-      this.tableDatas = []
+      this.tableDataCoo = []
+      this.tableDataDis = []
+
       this.isShowForm = true
     },
     insertData() {
@@ -306,7 +417,7 @@ export default {
 <style lang="scss" scoped>
 .upload {
   .bar {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   }
   .content {
     min-height: 60vh;
@@ -329,7 +440,19 @@ export default {
       top: 0;
       opacity: 0;
       width: 100%;
+      height: 100%;
       cursor: pointer;
+    }
+  }
+  .format-img {
+    text-align: center;
+    img {
+      width: 80%;
+      height: auto;
+      margin-top: 10px;
+    }
+    button {
+      width: 60%;
     }
   }
 }
