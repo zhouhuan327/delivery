@@ -19,7 +19,7 @@
           :inline="true"
         >
           <el-form-item label="客户点" prop="name">
-            <el-input v-model="formData.name"></el-input>
+            <el-input v-model="formData.name" disabled></el-input>
           </el-form-item>
 
           <el-form-item label="需求量" prop="qt">
@@ -67,84 +67,100 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-row>
+          <el-col :span="20">
+            <el-button type="primary">保存</el-button>
+            <el-button type="primary" @click="reset('coo-form')"
+              >重置</el-button
+            >
+          </el-col>
+        </el-row>
       </div>
       <el-col :span="20">
         <!-- 节点 -->
-        <template v-for="tableData in tableDataCoo">
-          <span class="table-title" :key="tableData.SheetName + 1">
-            <i class="el-icon-edit-outline"></i>
-            {{ tableData.SheetName }}
-          </span>
-          <el-table
-            class="table"
-            :data="tableData.data"
-            :key="tableData.SheetName"
-            height="350"
-            highlight-current-row
+        <div v-show="isShowCoo">
+          <template v-for="tableData in tableDataCoo">
+            <span class="table-title" :key="tableData.SheetName + 1">
+              <i class="el-icon-edit-outline"></i>
+              {{ tableData.SheetName }}
+            </span>
+            <el-table
+              class="table"
+              :data="tableData.data"
+              :key="tableData.SheetName"
+              height="350"
+              highlight-current-row
+            >
+              <el-table-column prop="name" label="客户点"> </el-table-column>
+              <el-table-column prop="x" label="横坐标x(km)"> </el-table-column>
+              <el-table-column prop="y" label="纵坐标y(km)"> </el-table-column>
+              <el-table-column prop="qt" label="需求量q(t)"> </el-table-column>
+              <el-table-column label="操作" width="120">
+                <template slot-scope="scope">
+                  <el-button
+                    @click.native.prevent="deleteRow(scope.$index, tableData)"
+                    type="text"
+                    size="small"
+                  >
+                    移除
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </template>
+          <el-button class="primary" @click="submitCoo" plain
+            >保存节点</el-button
           >
-            <el-table-column prop="name" label="客户点"> </el-table-column>
-            <el-table-column prop="x" label="横坐标x(km)"> </el-table-column>
-            <el-table-column prop="y" label="纵坐标y(km)"> </el-table-column>
-            <el-table-column prop="qt" label="需求量q(t)"> </el-table-column>
-            <el-table-column label="操作" width="120">
-              <template slot-scope="scope">
-                <el-button
-                  @click.native.prevent="deleteRow(scope.$index, tableData)"
-                  type="text"
-                  size="small"
-                >
-                  移除
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </template>
+        </div>
+
         <!-- 距离 -->
-        <template v-for="tableData in tableDataDis">
-          <span class="table-title" :key="tableData.SheetName + 1">
-            <i class="el-icon-edit-outline"></i>
-            {{ tableData.SheetName }}
-          </span>
-          <el-table
-            class="table"
-            :data="tableData.data"
-            :key="tableData.SheetName"
-            height="350"
-            highlight-current-row
-          >
-            <el-table-column prop="name" label="name"> </el-table-column>
-            <template v-for="(item, index) in tableData.data">
+        <div v-show="isShowDis">
+          <template v-show="isShownDis" v-for="tableData in tableDataDis">
+            <span class="table-title" :key="tableData.SheetName + 1">
+              <i class="el-icon-edit-outline"></i>
+              {{ tableData.SheetName }}
+            </span>
+            <el-table
+              class="table"
+              :data="tableData.data"
+              :key="tableData.SheetName"
+              height="350"
+              highlight-current-row
+            >
+              <el-table-column prop="name" label="name"> </el-table-column>
+              <template v-for="(item, index) in tableData.data">
+                <el-table-column
+                  :key="index"
+                  :prop="String(index)"
+                  :label="String(index)"
+                >
+                </el-table-column>
+              </template>
+            </el-table>
+            <!-- 各点的需求 -->
+            <el-table
+              :data="tableData.qtdata"
+              :key="tableData.qtdata[0].name"
+              highlight-current-row
+            >
               <el-table-column
-                :key="index"
-                :prop="String(index)"
-                :label="String(index)"
-              >
-              </el-table-column>
-            </template>
-          </el-table>
-          <!-- 各点的需求 -->
-          <el-table
-            :data="tableData.qtdata"
-            :key="tableData.qtdata[0].name"
-            highlight-current-row
+                prop="需求量"
+                label="配送点/需求量"
+              ></el-table-column>
+              <template v-for="(item, index) in tableData.qtdata[0]">
+                <el-table-column
+                  :key="index"
+                  :prop="String(index)"
+                  :label="String(Number(index) + 1)"
+                >
+                </el-table-column>
+              </template>
+            </el-table>
+          </template>
+          <el-button @click="SubmitDis" class="primary" plain
+            >保存距离</el-button
           >
-            <el-table-column prop="需求量" label="配送点"></el-table-column>
-            <template v-for="(item, index) in tableData.qtdata[0]">
-              <el-table-column
-                :key="index"
-                :prop="String(index)"
-                :label="index"
-              >
-              </el-table-column>
-            </template>
-          </el-table>
-        </template>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="20">
-        <el-button type="primary">保存</el-button>
-        <el-button type="primary" @click="reset('coo-form')">重置</el-button>
+        </div>
       </el-col>
     </el-row>
 
@@ -202,10 +218,12 @@ export default {
       isLoading: false,
       isShowDialog: false,
       tableDataCoo: [], // 要展示坐标数据，
+      isShowCoo: false,
       tableDataDis: [], // 要展示的距离数据
+      isShowDis: false,
       isShowForm: true, //手动输入的表格
       formData: {
-        name: 1,
+        name: 0,
         x: null,
         y: null,
         qt: null
@@ -262,6 +280,8 @@ export default {
       //初始化table
       this.tableDataCoo = []
       this.tableDataDis = []
+      this.isShowCoo = true
+      this.isShowDis = false
       this.isLoading = true
       const sheets = []
       let files = ev.target.files[0]
@@ -284,7 +304,9 @@ export default {
         this.tableDataCoo = sheets.map(item => {
           return {
             SheetName: item.SheetName,
-            data: this.formatterSheets(item.data)
+            data: this.formatterSheets(item.data),
+            qtdata: [],
+            type: item.type
           }
         })
         console.log('coo final', this.tableDataCoo)
@@ -299,6 +321,8 @@ export default {
       //初始化table
       this.tableDataCoo = []
       this.tableDataDis = []
+      this.isShowCoo = false
+      this.isShowDis = true
       const sheets = []
       let files = ev.target.files[0]
       let reader = new FileReader()
@@ -309,23 +333,7 @@ export default {
           let jsonData = XLSX.utils.sheet_to_json(
             wb.Sheets[wb.SheetNames[index]]
           )
-          console.log('d - json', jsonData)
-
-          // let distanceArray = []
-          // let qtArray = []
-          // //! 将节点关系转化成二维数组
-          // jsonData.some((row, rowindex) => {
-          //   if (row.name == 'T') {
-          //     return true
-          //   }
-          //   let arr = Object.values(row)
-          //   // arr.pop()
-          //   distanceArray.push(arr)
-          // })
-          // //!将需求量转换为数组
-          // let qt = Object.values(jsonData).pop() //jsondata的最后一个属性，表示需求量
-          // qtArray = Object.values(qt)
-          // qtArray.pop()
+          // console.log('d - json', jsonData)
 
           let distanceData = []
           let qtdata = []
@@ -409,6 +417,42 @@ export default {
       this.$refs[formName].resetFields()
       // 重置输入的坐标表
       this.formTableData = []
+    },
+    submitCoo() {
+      const data = this.tableDataCoo
+    },
+    SubmitDis() {
+      // let distanceArray = []
+      // let qtArray = []
+      // //! 将节点关系转化成二维数组
+      // jsonData.some((row, rowindex) => {
+      //   if (row.name == 'T') {
+      //     return true
+      //   }
+      //   let arr = Object.values(row)
+      //   // arr.pop()
+      //   distanceArray.push(arr)
+      // })
+      // //!将需求量转换为数组
+      // let qt = Object.values(jsonData).pop() //jsondata的最后一个属性，表示需求量
+      // qtArray = Object.values(qt)
+      // qtArray.pop()
+      const data = JSON.parse(JSON.stringify(this.tableDataDis))
+      data.forEach(item => {
+        let distanceArray = []
+        let qtArray = []
+        item.data.forEach(distance => {
+          let temp = Object.values(distance)
+          temp.pop()
+          distanceArray.push(temp)
+        })
+        item.qtdata.forEach(qt => {
+          qtArray = Object.values(qt)
+        })
+        item.data = distanceArray
+        item.qtdata = qtArray
+      })
+      console.log('submit dis', data)
     }
   }
 }
