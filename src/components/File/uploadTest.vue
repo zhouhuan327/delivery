@@ -80,14 +80,14 @@
         <!-- 节点 -->
         <div v-show="isShowCoo">
           <template v-for="tableData in tableDataCoo">
-            <span class="table-title" :key="tableData.SheetName + 1">
+            <span class="table-title" :key="tableData.sheetName + 1">
               <i class="el-icon-edit-outline"></i>
-              {{ tableData.SheetName }}
+              {{ tableData.sheetName }}
             </span>
             <el-table
               class="table"
               :data="tableData.data"
-              :key="tableData.SheetName"
+              :key="tableData.sheetName"
               height="350"
               highlight-current-row
             >
@@ -116,14 +116,14 @@
         <!-- 距离 -->
         <div v-show="isShowDis">
           <template v-show="isShownDis" v-for="tableData in tableDataDis">
-            <span class="table-title" :key="tableData.SheetName + 1">
+            <span class="table-title" :key="tableData.sheetName + 1">
               <i class="el-icon-edit-outline"></i>
-              {{ tableData.SheetName }}
+              {{ tableData.sheetName }}
             </span>
             <el-table
               class="table"
               :data="tableData.data"
-              :key="tableData.SheetName"
+              :key="tableData.sheetName"
               height="350"
               highlight-current-row
             >
@@ -157,7 +157,7 @@
               </template>
             </el-table>
           </template>
-          <el-button @click="SubmitDis" class="primary" plain
+          <el-button @click="submitDis" class="primary" plain
             >保存距离</el-button
           >
         </div>
@@ -275,6 +275,11 @@ export default {
       formTableData: []
     }
   },
+  created() {
+    this.$axios('/getNode').then(res => {
+      console.log(res)
+    })
+  },
   methods: {
     uploadFromCoodinate(ev) {
       //初始化table
@@ -303,7 +308,7 @@ export default {
         this.isShowForm = false
         this.tableDataCoo = sheets.map(item => {
           return {
-            SheetName: item.SheetName,
+            sheetName: item.SheetName,
             data: this.formatterSheets(item.data),
             qtdata: [],
             type: item.type
@@ -347,7 +352,7 @@ export default {
           qtdata.push(jsonData[jsonData.length - 1])
           delete qtdata[0].name
           sheets.push({
-            SheetName: item,
+            sheetName: item,
             data: distanceData,
             qtdata: qtdata,
             type: 'distance'
@@ -419,9 +424,23 @@ export default {
       this.formTableData = []
     },
     submitCoo() {
-      const data = this.tableDataCoo
+      const data = JSON.parse(JSON.stringify(this.tableDataCoo))
+      this.$axios.post('/addNode', data).then(res => {
+        console.log(res.data)
+        if (res.data.statu == 100) {
+          this.$message({
+            message: '保存成功',
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: '保存失败' + res.data.msg,
+            type: 'error'
+          })
+        }
+      })
     },
-    SubmitDis() {
+    submitDis() {
       // let distanceArray = []
       // let qtArray = []
       // //! 将节点关系转化成二维数组
@@ -452,7 +471,20 @@ export default {
         item.data = distanceArray
         item.qtdata = qtArray
       })
-      console.log('submit dis', data)
+      this.$axios.post('/addNode', data).then(res => {
+        console.log(res.data)
+        if (res.data.statu == 100) {
+          this.$message({
+            message: '保存成功',
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: '保存失败' + res.data.msg,
+            type: 'error'
+          })
+        }
+      })
     }
   }
 }
