@@ -69,7 +69,9 @@
         </el-table>
         <el-row>
           <el-col :span="20">
-            <el-button type="primary">保存</el-button>
+            <el-button @click="isShowSubmit = true" type="primary"
+              >保存</el-button
+            >
             <el-button type="primary" @click="reset('coo-form')"
               >重置</el-button
             >
@@ -86,7 +88,7 @@
             </span>
             <el-table
               class="table"
-              :data="tableData.data"
+              :data="tableData.cooData"
               :key="tableData.sheetName"
               height="350"
               highlight-current-row
@@ -122,13 +124,13 @@
             </span>
             <el-table
               class="table"
-              :data="tableData.data"
+              :data="tableData.disData"
               :key="tableData.sheetName"
               height="350"
               highlight-current-row
             >
               <el-table-column prop="name" label="name"> </el-table-column>
-              <template v-for="(item, index) in tableData.data">
+              <template v-for="(item, index) in tableData.disData">
                 <el-table-column
                   :key="index"
                   :prop="String(index)"
@@ -206,6 +208,17 @@
         > -->
       </span>
     </el-dialog>
+    <el-dialog title="取个名字" :visible.sync="isShowSubmit" width="30%">
+      <el-form :model="dataName" :inline="true">
+        <el-form-item label="数据名" prop="name">
+          <el-input v-model="dataName.name"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="isShowSubmit = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -216,12 +229,11 @@ export default {
   data() {
     return {
       isLoading: false,
-      isShowDialog: false,
+      isShowDialog: false, //类型选择Dialog
       tableDataCoo: [], // 要展示坐标数据，
       isShowCoo: false,
       tableDataDis: [], // 要展示的距离数据
       isShowDis: false,
-      isShowForm: true, //手动输入的表格
       formData: {
         name: 0,
         x: null,
@@ -272,13 +284,18 @@ export default {
           }
         ]
       },
-      formTableData: []
+      formTableData: [],
+      isShowForm: true, //手动输入的表格
+      isShowSubmit: false,
+      dataName: {
+        name: ''
+      }
     }
   },
   created() {
-    this.$axios('/getNode').then(res => {
-      console.log(res)
-    })
+    // this.$axios('/getNode').then(res => {
+    //   console.log(res)
+    // })
   },
   methods: {
     uploadFromCoodinate(ev) {
@@ -309,7 +326,8 @@ export default {
         this.tableDataCoo = sheets.map(item => {
           return {
             sheetName: item.SheetName,
-            data: this.formatterSheets(item.data),
+            cooData: this.formatterSheets(item.data),
+            disData: [],
             qtdata: [],
             type: item.type
           }
@@ -353,7 +371,8 @@ export default {
           delete qtdata[0].name
           sheets.push({
             sheetName: item,
-            data: distanceData,
+            disData: distanceData,
+            cooData: [],
             qtdata: qtdata,
             type: 'distance'
           })
@@ -423,6 +442,42 @@ export default {
       // 重置输入的坐标表
       this.formTableData = []
     },
+    submitForm() {
+      if (this.formTableData.length == 0 || this.dataName.name == '') {
+        this.$message({
+          message: '数据或数据名不能为空',
+          type: 'warning'
+        })
+      } else {
+        let obj = {
+          sheetName: this.dataName.name,
+          type: 'coodinate',
+          disData: [],
+          cooData: this.formTableData,
+          qtdata: []
+        }
+        let arr = []
+        arr.push(obj)
+        this.$axios.post('/addNode', arr).then(res => {
+          if (res.data.statu == 100) {
+            this.$message({
+              message: res.data.msg,
+              type: 'success'
+            })
+            this.isShowSubmit = false
+            this.dataName.name = null
+            this.$refs['coo-form'].resetFields()
+            // 重置输入的坐标表
+            this.formTableData = []
+          } else {
+            this.$message({
+              message: res.data.msg,
+              type: 'error'
+            })
+          }
+        })
+      }
+    },
     submitCoo() {
       const data = JSON.parse(JSON.stringify(this.tableDataCoo))
       this.$axios.post('/addNode', data).then(res => {
@@ -441,26 +496,11 @@ export default {
       })
     },
     submitDis() {
-      // let distanceArray = []
-      // let qtArray = []
-      // //! 将节点关系转化成二维数组
-      // jsonData.some((row, rowindex) => {
-      //   if (row.name == 'T') {
-      //     return true
-      //   }
-      //   let arr = Object.values(row)
-      //   // arr.pop()
-      //   distanceArray.push(arr)
-      // })
-      // //!将需求量转换为数组
-      // let qt = Object.values(jsonData).pop() //jsondata的最后一个属性，表示需求量
-      // qtArray = Object.values(qt)
-      // qtArray.pop()
       const data = JSON.parse(JSON.stringify(this.tableDataDis))
       data.forEach(item => {
         let distanceArray = []
         let qtArray = []
-        item.data.forEach(distance => {
+        item.disData.forEach(distance => {
           let temp = Object.values(distance)
           temp.pop()
           distanceArray.push(temp)
@@ -468,7 +508,7 @@ export default {
         item.qtdata.forEach(qt => {
           qtArray = Object.values(qt)
         })
-        item.data = distanceArray
+        item.disData = distanceArray
         item.qtdata = qtArray
       })
       this.$axios.post('/addNode', data).then(res => {
