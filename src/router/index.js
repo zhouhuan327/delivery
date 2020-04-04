@@ -33,12 +33,12 @@ export const RouterMap = [
         meta: { title: '测试路由2', icon: 'iconfont icon-peisong3' },
         component: () => import('@/views/404.vue')
       },
-      {
-        path: '/plan1',
-        name: "plan1",
-        meta: { title: 'plan1', icon: 'iconfont icon-zuobiao1' },
-        component: () => import('@/components/RouteGraph/index.vue')
-      },
+      // {
+      //   path: '/plan1',
+      //   name: "plan1",
+      //   meta: { title: 'plan1', icon: 'iconfont icon-zuobiao1' },
+      //   component: () => import('@/components/RouteGraph/index.vue')
+      // },
       {
         path: '/plan2',
         name: "plan2",
@@ -50,6 +50,11 @@ export const RouterMap = [
         name: "uploadtest",
         meta: { title: 'Excel上传', icon: 'iconfont icon-zuobiao1' },
         component: () => import('@/components/File/uploadTest.vue')
+      }, {
+        path: '/nodelist',
+        name: "nodelist",
+        meta: { title: '节点管理', icon: 'iconfont icon-zuobiao1' },
+        component: () => import('@/components/NodeList/index.vue')
       }
     ]
 

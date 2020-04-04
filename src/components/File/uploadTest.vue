@@ -401,7 +401,8 @@ export default {
     showForm() {
       this.tableDataCoo = []
       this.tableDataDis = []
-
+      this.isShowCoo = false
+      this.isShowDis = false
       this.isShowForm = true
     },
     insertData() {
