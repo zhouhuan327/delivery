@@ -55,6 +55,12 @@ export const RouterMap = [
         name: "nodelist",
         meta: { title: '节点管理', icon: 'iconfont icon-zuobiao1' },
         component: () => import('@/components/NodeList/index.vue')
+      },
+      {
+        path: '/calcRoute',
+        name: "calcRoute",
+        meta: { title: '路线计算', icon: 'iconfont icon-zuobiao1' },
+        component: () => import('@/components/calcRoute/index.vue')
       }
     ]
 

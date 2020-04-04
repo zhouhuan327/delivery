@@ -23,24 +23,15 @@
           </el-form-item>
 
           <el-form-item label="需求量" prop="qt">
-            <el-input
-              v-model.number="formData.qt"
-              placeholder="q(t)"
-            ></el-input>
+            <el-input v-model="formData.qt" placeholder="q(t)"></el-input>
           </el-form-item>
 
           <el-form-item label="横坐标" prop="x">
-            <el-input
-              v-model.number="formData.x"
-              placeholder="横坐标x(km)"
-            ></el-input>
+            <el-input v-model="formData.x" placeholder="横坐标x(km)"></el-input>
           </el-form-item>
 
           <el-form-item label="纵坐标" prop="y">
-            <el-input
-              v-model.number="formData.y"
-              placeholder="纵坐标y(km)"
-            ></el-input>
+            <el-input v-model="formData.y" placeholder="纵坐标y(km)"></el-input>
           </el-form-item>
 
           <el-button @click="insertData" type="primary" plain>插入</el-button>
@@ -255,32 +246,33 @@ export default {
             trigger: 'blur'
           },
           {
-            type: 'number',
-            message: '请输入数字'
+            pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
+            message: '请输入合法的数字，最多两位小数',
+            trigger: 'change'
           }
         ],
         x: [
           {
             required: true,
-            type: 'number',
             message: '请输入横坐标x',
             trigger: 'blur'
           },
           {
-            type: 'number',
-            message: '请输入数字'
+            pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
+            message: '请输入合法的数字，最多两位小数',
+            trigger: 'change'
           }
         ],
         y: [
           {
             required: true,
-            type: 'number',
             message: '请输入纵坐标y',
             trigger: 'blur'
           },
           {
-            type: 'number',
-            message: '请输入数字'
+            pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
+            message: '请输入合法的数字，最多两位小数',
+            trigger: 'change'
           }
         ]
       },
