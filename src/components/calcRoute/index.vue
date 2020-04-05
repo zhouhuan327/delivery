@@ -26,7 +26,7 @@
                 <el-col :span="12">
                   {{ item.name }}
                 </el-col>
-                <el-col style="float:right;margin-right:10px" :span="4">
+                <el-col style="float: right; margin-right: 10px;" :span="4">
                   <template v-if="item.type == 'coodinate'">
                     <el-tag type="success">坐标</el-tag>
                   </template>
@@ -63,7 +63,7 @@
           <el-switch v-model="parama.isTime"></el-switch>
         </el-form-item>
         <transition name="fade-transform">
-          <div style="display:inline-block" v-show="parama.isTime">
+          <div style="display: inline-block;" v-show="parama.isTime">
             <el-form-item label="平均速度">
               <el-input></el-input>
             </el-form-item>
@@ -124,7 +124,7 @@ import Graph from '@/components/RouteGraph/Graph'
 export default {
   name: 'calcRoute',
   components: {
-    Graph
+    Graph,
   },
   data() {
     return {
@@ -139,20 +139,20 @@ export default {
         sizepop: null, //种群规模
         maxgen: null, //迭代次数
         isTime: false,
-        model: ''
+        model: '',
       },
       optionList: [],
       isLoading: false,
-      graphData: {}
+      graphData: {},
     }
   },
   created() {
-    this.$axios('/getNodeList').then(res => {
+    this.$axios('/getNodeList').then((res) => {
       if (res.data.statu == 100) {
         const list = res.data.data
         console.log('getList', list)
         const optionList = []
-        list.forEach(item => {
+        list.forEach((item) => {
           let count =
             item.cooData.length == 0 ? item.disData.length : item.cooData.length
           let data = item.cooData.length == 0 ? item.disData : item.cooData
@@ -161,7 +161,7 @@ export default {
             name: item.sheetName,
             type: item.type,
             count: count,
-            data: data
+            data: data,
           })
         })
         this.optionList = optionList
@@ -174,11 +174,11 @@ export default {
       console.log('传入的', this.parama)
       this.$axios
         .post('/calc', this.parama)
-        .then(res => {
+        .then((res) => {
           if (res.data.statu == 100) {
             this.$message({
               message: res.data.msg,
-              type: 'success'
+              type: 'success',
             })
             this.isLoading = false
             console.log('计算结果', res.data)
@@ -190,7 +190,7 @@ export default {
               exInfo.push({
                 name: `车${index + 1}`,
                 distance: Math.floor(item),
-                weight: Math.floor(tempwei[index])
+                weight: Math.floor(tempwei[index]),
               })
             })
             this.graphData.exInfo = exInfo
@@ -199,12 +199,12 @@ export default {
           } else {
             this.$message({
               message: res.data.msg,
-              type: 'error'
+              type: 'error',
             })
             this.isLoading = false
           }
         })
-        .catch(error => {
+        .catch((error) => {
           this.isLoading = false
           console.log(error)
         })
@@ -226,14 +226,14 @@ export default {
         link.push({
           name: `车${index + 1}`,
           value: item,
-          index: index
+          index: index,
         })
       })
       this.graphData.link = link
       console.log(' this.graphData', this.graphData)
     },
     setCount(id) {
-      this.optionList.forEach(item => {
+      this.optionList.forEach((item) => {
         if (item.id == id) {
           this.parama.n = item.count - 1
           this.graphData.data = item.data
@@ -249,7 +249,7 @@ export default {
       this.parama.q = 8
       this.parama.maxroad = 50
       this.parama.sizepop = 100
-      this.parama.maxgen = 1000
+      this.parama.maxgen = 100
     },
     default_dis() {
       this.parama.m = 3
@@ -257,8 +257,8 @@ export default {
       this.parama.maxroad = 50
       this.parama.sizepop = 50
       this.parama.maxgen = 100
-    }
-  }
+    },
+  },
 }
 </script>
 

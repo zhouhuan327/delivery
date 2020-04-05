@@ -15,9 +15,11 @@
               :label="item"
               :key="item.index"
             >
-              <i class="el-icon-setting"></i>
-              {{ item.name }}</el-checkbox-button
-            >
+              <div class="route-btn-content">
+                <span class="color-block"></span>
+                <span class="color-block-name">{{ item.name }}</span>
+              </div>
+            </el-checkbox-button>
           </el-checkbox-group>
         </div>
       </el-col>
@@ -42,13 +44,13 @@ const colorMap = [
   '#61a0a8',
   '#d48265',
   '#91c7ae',
-  '#6e7074'
+  '#6e7074',
 ]
 const testlink = [
   { name: '车1', value: [1, 6, 5, 4, 3, 2, 1], index: 0 },
   { name: '车2', value: [1, 10, 1, 6, 5, 4, 3, 1], index: 1 },
   { name: '车3', value: [1, 9, 8, 7, 1], index: 2 },
-  { name: '车4', value: [1, 10, 9, 8, 1], index: 3 }
+  { name: '车4', value: [1, 10, 9, 8, 1], index: 3 },
 ]
 export default {
   name: 'route-graph',
@@ -56,7 +58,7 @@ export default {
     return {
       links: [],
       checkedRoute: [testlink[0]],
-      linkData: testlink
+      linkData: testlink,
     }
   },
   components: {},
@@ -79,11 +81,11 @@ export default {
             target: arr[index + 1] - 1,
             label: {
               show: false,
-              fontSize: 13
+              fontSize: 13,
             },
             lineStyle: {
-              color: color
-            }
+              color: color,
+            },
           })
         }
       })
@@ -92,20 +94,20 @@ export default {
     changeOption(e) {
       console.log('选中的', this.checkedRoute)
       let newlinks = []
-      this.checkedRoute.forEach(item => {
+      this.checkedRoute.forEach((item) => {
         const data = this.formatterLinks(item.value, colorMap[item.index])
         newlinks = data.concat(newlinks)
       })
       this.links = newlinks
       this.drawGraph()
       console.log('转换后', newlinks)
-    }
+    },
   },
   created() {},
   mounted() {
     this.links = this.formatterLinks(this.linkData[0].value)
     this.drawGraph()
-  }
+  },
 }
 </script>
 
@@ -124,6 +126,19 @@ export default {
   .chart {
     height: 70vh;
   }
+
+  .route-btn {
+    .route-btn-content {
+      display: flex;
+      .color-block {
+        width: 18px;
+        height: 12px;
+        border-radius: 2px;
+        background: gold;
+        margin-right: 10px;
+      }
+    }
+  }
   .el-checkbox-button {
     margin: 2px;
     .el-checkbox-button__inner {
@@ -137,7 +152,6 @@ export default {
   }
   .el-checkbox-button.is-checked {
     .el-checkbox-button__inner {
-      // btn color
     }
   }
 }

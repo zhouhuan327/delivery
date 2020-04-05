@@ -15,8 +15,13 @@
               :label="item"
               :key="item.index"
             >
-              <i class="el-icon-setting"></i>
-              {{ item.name }}</el-checkbox-button
+              <div class="route-btn-content">
+                <span
+                  :style="{ background: item.color }"
+                  class="color-block"
+                ></span>
+                <span class="color-block-name">{{ item.name }}</span>
+              </div></el-checkbox-button
             >
           </el-checkbox-group>
         </div>
@@ -80,6 +85,7 @@ export default {
       this.option = getDisOptions //! 引力图的配置项
     }
     this.linkData = this.graphData.link // 路径
+    this.linkData.forEach((item) => (item.color = this.chooseColor(item.index)))
     this.exInfo = this.graphData.exInfo // 车信息
     this.checkedRoute.push(this.linkData[0]) //选中的路径
     this.links = this.formatterLinks(this.linkData[0].value, colorMap[0]) //第一辆车的路径
@@ -134,12 +140,25 @@ export default {
       console.log('选中的', this.checkedRoute)
       let newlinks = []
       this.checkedRoute.forEach((item) => {
-        const data = this.formatterLinks(item.value, colorMap[item.index])
+        const data = this.formatterLinks(
+          item.value,
+          this.chooseColor(item.index)
+        )
         newlinks = data.concat(newlinks)
       })
       this.links = newlinks
       this.drawGraph()
       console.log('转换后', newlinks)
+    },
+    chooseColor(index) {
+      let len = colorMap.length
+      let i = 0
+      if (index <= len - 1) {
+        i = index
+      } else {
+        i = index % len
+      }
+      return colorMap[i]
     },
   },
 }
@@ -166,10 +185,25 @@ export default {
       margin-bottom: 10px;
     }
   }
+  .route-btn {
+    .route-btn-content {
+      display: flex;
+      font-size: 13px;
+      .color-block {
+        width: 18px;
+        height: 12px;
+        border-radius: 4px;
+        background: gray;
+        margin-right: 10px;
+      }
+    }
+  }
   .el-checkbox-button {
     margin: 2px;
     .el-checkbox-button__inner {
+      border: none;
       border-radius: 10px;
+      color: gray;
     }
   }
   .el-checkbox-button.is-focus {
@@ -179,7 +213,9 @@ export default {
   }
   .el-checkbox-button.is-checked {
     .el-checkbox-button__inner {
-      // btn color
+      background-color: #bfcbd9;
+      color: black;
+      font-weight: bold;
     }
   }
 }
