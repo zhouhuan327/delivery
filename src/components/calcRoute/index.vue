@@ -108,7 +108,7 @@
       >
     </transition>
     <el-dialog :visible.sync="dialogVisible" width="70%">
-      <Graph />
+      <Graph :graphData="graphData"></Graph>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="dialogVisible = false"
@@ -120,7 +120,7 @@
 </template>
 
 <script>
-import Graph from '@/components/RouteGraph/index2'
+import Graph from '@/components/RouteGraph/Graph'
 export default {
   name: 'calcRoute',
   components: {
@@ -128,7 +128,7 @@ export default {
   },
   data() {
     return {
-      isShowDetailBtn: true,
+      isShowDetailBtn: false,
       dialogVisible: false,
       parama: {
         id: '', // 节点ID
@@ -181,8 +181,20 @@ export default {
               type: 'success'
             })
             this.isLoading = false
-            console.log(res.data)
-            this.setGraphData(res.data.data)
+            console.log('计算结果', res.data)
+            // 处理载货量和行驶距离
+            let exInfo = []
+            let tempdis = res.data.data.distance
+            let tempwei = res.data.data.weight
+            tempdis.forEach((item, index) => {
+              exInfo.push({
+                name: `车${index + 1}`,
+                distance: Math.floor(item),
+                weight: Math.floor(tempwei[index])
+              })
+            })
+            this.graphData.exInfo = exInfo
+            this.setGraphData(res.data.data) //处理路径
             this.isShowDetailBtn = true
           } else {
             this.$message({
@@ -218,7 +230,7 @@ export default {
         })
       })
       this.graphData.link = link
-      console.log(this.graphData)
+      console.log(' this.graphData', this.graphData)
     },
     setCount(id) {
       this.optionList.forEach(item => {

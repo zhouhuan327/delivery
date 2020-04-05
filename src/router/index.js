@@ -48,18 +48,18 @@ export const RouterMap = [
       {
         path: '/uploadtest',
         name: "uploadtest",
-        meta: { title: 'Excel上传', icon: 'iconfont icon-zuobiao1' },
+        meta: { title: 'Excel上传', icon: 'iconfont icon-Excel' },
         component: () => import('@/components/File/uploadTest.vue')
       }, {
         path: '/nodelist',
         name: "nodelist",
-        meta: { title: '节点管理', icon: 'iconfont icon-zuobiao1' },
+        meta: { title: '节点管理', icon: 'iconfont icon-node1' },
         component: () => import('@/components/NodeList/index.vue')
       },
       {
         path: '/calcRoute',
         name: "calcRoute",
-        meta: { title: '路线计算', icon: 'iconfont icon-zuobiao1' },
+        meta: { title: '路线计算', icon: 'iconfont icon-route' },
         component: () => import('@/components/calcRoute/index.vue')
       }
     ]

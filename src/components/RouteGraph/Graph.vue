@@ -1,0 +1,186 @@
+<template>
+  <div class="route-graph">
+    <el-row class="bar">
+      <el-col :span="4"><span class="title">配送路线图</span></el-col>
+      <el-col :span="20">
+        <div class="route-check">
+          <el-checkbox-group
+            @change="changeOption"
+            v-model="checkedRoute"
+            size="small"
+          >
+            <el-checkbox-button
+              class="route-btn"
+              v-for="item in linkData"
+              :label="item"
+              :key="item.index"
+            >
+              <i class="el-icon-setting"></i>
+              {{ item.name }}</el-checkbox-button
+            >
+          </el-checkbox-group>
+        </div>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="16"
+        ><div id="chart" ref="mychart" class="chart"></div
+      ></el-col>
+      <el-col :span="8">
+        <template v-for="item in exInfo">
+          <el-card :key="item.name" class="box-card">
+            <p>{{ item.name }}</p>
+            <p>行驶路程:{{ item.distance }}</p>
+            <p>载货量:{{ item.weight }}</p>
+          </el-card>
+        </template>
+      </el-col>
+    </el-row>
+  </div>
+</template>
+
+<script>
+import echarts from 'echarts'
+import { getCooOptions, getDisOptions } from './config/final.js'
+const colorMap = [
+  '#c23531',
+  '#3C93DD',
+  '#61a0a8',
+  '#d48265',
+  '#91c7ae',
+  '#6e7074',
+]
+export default {
+  name: 'route-graph',
+  props: ['graphData'],
+  data() {
+    return {
+      links: [], //选中的小车的路线
+      checkedRoute: [], // checkbox
+      nodeData: [],
+      linkData: [],
+      exInfo: [],
+      option: {}, //!配置项
+    }
+  },
+  mounted() {
+    // console.log('prop', this.graphData)
+    if (this.graphData.type == 'coodinate') {
+      this.nodeData = this.graphData.data //坐标
+      this.option = getCooOptions //! 坐标的配置项
+    } else if (this.graphData.type == 'distance') {
+      this.layout = 'force'
+      let distanceNodeData = []
+      this.graphData.data.forEach((item, index) => {
+        distanceNodeData.push({
+          name: index + '',
+        })
+      })
+      this.nodeData = distanceNodeData
+      this.option = getDisOptions //! 引力图的配置项
+    }
+    this.linkData = this.graphData.link // 路径
+    this.exInfo = this.graphData.exInfo // 车信息
+    this.checkedRoute.push(this.linkData[0]) //选中的路径
+    this.links = this.formatterLinks(this.linkData[0].value, colorMap[0]) //第一辆车的路径
+    console.log('default node', this.nodeData)
+    console.log('default links', this.links)
+
+    this.drawGraph()
+  },
+  watch: {
+    graphData: {
+      handler(newV, oldV) {
+        // do something, 可使用this
+        this.graphData = newV
+        this.drawGraph()
+        console.log(newV, oldV)
+      },
+      deep: true,
+    },
+  },
+  components: {},
+  methods: {
+    drawGraph() {
+      let chart = echarts.init(document.getElementById('chart'))
+      if (chart == undefined) {
+        console.log(`echarts init dom is failed`)
+        return
+      }
+      const getOption = this.option
+      const options = getOption(this.nodeData, this.links)
+      chart.setOption(options)
+    },
+    formatterLinks(arr, color) {
+      let res = []
+      arr.forEach((item, index) => {
+        if (index < arr.length - 1) {
+          res.push({
+            source: item,
+            target: arr[index + 1],
+            label: {
+              show: false,
+              fontSize: 13,
+            },
+            lineStyle: {
+              color: color,
+            },
+          })
+        }
+      })
+      return res
+    },
+    changeOption() {
+      console.log('选中的', this.checkedRoute)
+      let newlinks = []
+      this.checkedRoute.forEach((item) => {
+        const data = this.formatterLinks(item.value, colorMap[item.index])
+        newlinks = data.concat(newlinks)
+      })
+      this.links = newlinks
+      this.drawGraph()
+      console.log('转换后', newlinks)
+    },
+  },
+}
+</script>
+
+<style lang="scss">
+.route-graph {
+  .bar {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    .title {
+      font-size: 17px;
+      font-weight: bold;
+      padding-left: 10px;
+    }
+  }
+  .chart {
+    height: 70vh;
+  }
+  .box-card {
+    margin-bottom: 10px;
+    p {
+      margin-bottom: 10px;
+    }
+  }
+  .el-checkbox-button {
+    margin: 2px;
+    .el-checkbox-button__inner {
+      border-radius: 10px;
+    }
+  }
+  .el-checkbox-button.is-focus {
+    .el-checkbox-button__inner {
+      border: none;
+    }
+  }
+  .el-checkbox-button.is-checked {
+    .el-checkbox-button__inner {
+      // btn color
+    }
+  }
+}
+</style>
