@@ -57,9 +57,10 @@ const colorMap = [
 ]
 export default {
   name: 'route-graph',
-  props: ['graphData'],
+  props: ['gData'],
   data() {
     return {
+      graphData: this.gData,
       links: [], //选中的小车的路线
       checkedRoute: [], // checkbox
       nodeData: [],
@@ -70,43 +71,47 @@ export default {
   },
   mounted() {
     // console.log('prop', this.graphData)
-    if (this.graphData.type == 'coodinate') {
-      this.nodeData = this.graphData.data //坐标
-      this.option = getCooOptions //! 坐标的配置项
-    } else if (this.graphData.type == 'distance') {
-      this.layout = 'force'
-      let distanceNodeData = []
-      this.graphData.data.forEach((item, index) => {
-        distanceNodeData.push({
-          name: index + '',
-        })
-      })
-      this.nodeData = distanceNodeData
-      this.option = getDisOptions //! 引力图的配置项
-    }
-    this.linkData = this.graphData.link // 路径
-    this.linkData.forEach((item) => (item.color = this.chooseColor(item.index)))
-    this.exInfo = this.graphData.exInfo // 车信息
-    this.checkedRoute.push(this.linkData[0]) //选中的路径
-    this.links = this.formatterLinks(this.linkData[0].value, colorMap[0]) //第一辆车的路径
-    console.log('default node', this.nodeData)
-    console.log('default links', this.links)
-
-    this.drawGraph()
+    this.initData()
   },
   watch: {
-    graphData: {
+    gData: {
+      immediate: true,
       handler(newV, oldV) {
         // do something, 可使用this
         this.graphData = newV
-        this.drawGraph()
-        console.log(newV, oldV)
+        this.initData()
+        console.log('watch监听:', newV)
       },
       deep: true,
     },
   },
   components: {},
   methods: {
+    initData() {
+      if (this.graphData.type == 'coodinate') {
+        this.nodeData = this.graphData.data //坐标
+        this.option = getCooOptions //! 坐标的配置项
+      } else if (this.graphData.type == 'distance') {
+        this.layout = 'force'
+        let distanceNodeData = []
+        this.graphData.data.forEach((item, index) => {
+          distanceNodeData.push({
+            name: index + '',
+          })
+        })
+        this.nodeData = distanceNodeData
+        this.option = getDisOptions //! 引力图的配置项
+      }
+      this.linkData = this.graphData.link // 路径
+      this.linkData.forEach(
+        (item) => (item.color = this.chooseColor(item.index))
+      )
+      this.exInfo = this.graphData.exInfo // 车信息
+      this.checkedRoute.push(this.linkData[0]) //选中的路径
+      this.links = this.formatterLinks(this.linkData[0].value, colorMap[0]) //第一辆车的路径
+      this.drawGraph()
+    },
+
     drawGraph() {
       let chart = echarts.init(document.getElementById('chart'))
       if (chart == undefined) {

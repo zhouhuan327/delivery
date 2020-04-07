@@ -11,7 +11,7 @@
         <el-dropdown class="system-user">
           <span class="userinfo-inner">
             <!-- <i class="iconfont icon-TEAMNETWORK"></i> -->
-            这里放我们的队名
+            Specialized
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="usercenter"

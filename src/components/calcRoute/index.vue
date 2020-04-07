@@ -108,7 +108,7 @@
       >
     </transition>
     <el-dialog :visible.sync="dialogVisible" width="70%">
-      <Graph :graphData="graphData"></Graph>
+      <Graph :gData="graphData"></Graph>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="dialogVisible = false"
@@ -182,18 +182,6 @@ export default {
             })
             this.isLoading = false
             console.log('计算结果', res.data)
-            // 处理载货量和行驶距离
-            let exInfo = []
-            let tempdis = res.data.data.distance
-            let tempwei = res.data.data.weight
-            tempdis.forEach((item, index) => {
-              exInfo.push({
-                name: `车${index + 1}`,
-                distance: Math.floor(item),
-                weight: Math.floor(tempwei[index]),
-              })
-            })
-            this.graphData.exInfo = exInfo
             this.setGraphData(res.data.data) //处理路径
             this.isShowDetailBtn = true
           } else {
@@ -210,6 +198,18 @@ export default {
         })
     },
     setGraphData(data) {
+      // 处理载货量和行驶距离
+      let exInfo = []
+      let tempdis = data.distance
+      let tempwei = data.weight
+      tempdis.forEach((item, index) => {
+        exInfo.push({
+          name: `车${index + 1}`,
+          distance: Math.floor(item),
+          weight: Math.floor(tempwei[index]),
+        })
+      })
+      this.graphData.exInfo = exInfo
       let route = data.route
       let res = []
       let temp = []
@@ -230,6 +230,8 @@ export default {
         })
       })
       this.graphData.link = link
+      const deepCopy = JSON.parse(JSON.stringify(this.graphData))
+      this.graphData = deepCopy
       console.log(' this.graphData', this.graphData)
     },
     setCount(id) {

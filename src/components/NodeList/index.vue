@@ -2,7 +2,7 @@
   <div class="node-list">
     <el-table
       :data="list"
-      style="width: 100%"
+      style="width: 100%;"
       :default-sort="{ prop: 'id', order: 'descending' }"
     >
       <el-table-column prop="id" label="id" sortable width="180">
@@ -27,6 +27,20 @@
             size="small"
           >
             详情
+          </el-button>
+          <el-button
+            @click.native.prevent="deleteRow(scope, list)"
+            type="text"
+            size="small"
+          >
+            删除
+          </el-button>
+          <el-button
+            @click.native.prevent="exportExcel(scope, list)"
+            type="text"
+            size="small"
+          >
+            导出
           </el-button>
         </template>
       </el-table-column>
@@ -107,6 +121,7 @@
 </template>
 
 <script>
+import XLSX from 'xlsx'
 export default {
   name: '',
   data() {
@@ -116,11 +131,11 @@ export default {
       isShowDisDialog: false,
       CooInfo: [],
       disInfo: {},
-      tempqt: []
+      tempqt: [],
     }
   },
   created() {
-    this.$axios('/getNodeList').then(res => {
+    this.$axios('/getNodeList').then((res) => {
       if (res.data.statu == 100) {
         this.list = res.data.data
         console.log(res)
@@ -148,6 +163,9 @@ export default {
         this.CooInfo = scope.row.cooData
       } else if (scope.row.type == 'distance') {
         this.disInfo = scope.row
+        this.disInfo.disData.forEach((item, index) => {
+          item.name = index
+        })
         let temp = []
         let qt = this.disInfo.qtdata
         temp.push({ ...qt })
@@ -156,8 +174,98 @@ export default {
         this.isShowDisDialog = true
       }
       console.log(this.disInfo)
-    }
-  }
+    },
+    deleteRow(scope, row) {
+      console.log(scope)
+      this.$alert('确定吗确定吗', '删除', {
+        confirmButtonText: '确定',
+        callback: (action) => {
+          const item = {
+            id: scope.row.id,
+          }
+          this.$axios.post('/deleteNode', item).then((res) => {
+            if (res.data.statu == 100) {
+              this.$message({
+                message: res.data.msg,
+                type: 'success',
+              })
+            }
+          })
+          let i
+          this.list.forEach((item, index) => {
+            if (item.id == scope.row.id) {
+              i = index
+            }
+          })
+
+          row.splice(i, 1)
+        },
+      })
+    },
+    exportExcel(scope, list) {
+      console.log('export data row', scope.row)
+      if (scope.row.type == 'coodinate') {
+        let data = scope.row.cooData
+        let table = []
+        table.push({
+          A: '客户点',
+          B: '横坐标',
+          C: '纵坐标',
+          D: '需求量',
+        })
+        data.forEach((item) => {
+          table.push({
+            A: item.name,
+            B: item.x,
+            C: item.y,
+            D: item.qt,
+          })
+        })
+        const wb = XLSX.utils.book_new()
+        const ws = XLSX.utils.json_to_sheet(table, {
+          header: ['A', 'B', 'C', 'D'],
+          skipHeader: true,
+        })
+        ws['!cols'] = [{ width: 8 }, { width: 8 }, { width: 8 }, { width: 8 }]
+
+        //sheet写入book
+        XLSX.utils.book_append_sheet(wb, ws, 'file')
+        //输出
+        const name = scope.row.sheetName + new Date().toDateString()
+        XLSX.writeFile(wb, name + '.xlsx')
+      } else if (scope.row.type == 'distance') {
+        let data = scope.row.disData
+        data.forEach((item, index) => (item.name = index))
+        let table = []
+        let headerObj = {}
+        //根据数据长度动态生成表头
+        data.forEach((item, index) => {
+          if (index == 0) {
+            headerObj['name'] = String(index)
+          }
+          headerObj[index] = String(index)
+        })
+        console.log('obj', headerObj)
+        table.push(headerObj)
+        data.forEach((row) => {
+          table.push(row)
+        })
+        let headerArr = Object.keys(headerObj)
+        headerArr.pop()
+        headerArr.unshift('name')
+        const wb = XLSX.utils.book_new()
+        const ws = XLSX.utils.json_to_sheet(table, {
+          header: headerArr,
+          skipHeader: true,
+        })
+        //sheet写入book
+        XLSX.utils.book_append_sheet(wb, ws, 'file')
+        //输出
+        const name = scope.row.sheetName + new Date().toDateString()
+        XLSX.writeFile(wb, name + '.xlsx')
+      }
+    },
+  },
 }
 </script>
 

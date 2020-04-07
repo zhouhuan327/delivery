@@ -20,10 +20,56 @@ export const RouterMap = [
     ]
   },
   {
+    path: '/',
+    name: 'upload',
+    component: Layout,
+    hidden: true,
+    redirect: '/upload',
+    children: [
+      {
+        path: '/upload',
+        name: "upload",
+        meta: { title: '地图节点录入', icon: 'iconfont icon-Excel' },
+        component: () => import('@/components/File/uploadTest.vue')
+      }
+    ]
+  },
+  {
+    path: '/',
+    name: 'nodelist',
+    component: Layout,
+    hidden: true,
+    redirect: '/nodelist',
+    children: [
+      {
+        path: '/nodelist',
+        name: "nodelist",
+        meta: { title: '地图管理', icon: 'iconfont icon-node1' },
+        component: () => import('@/components/NodeList/index.vue')
+      }
+    ]
+  },
+  {
+    path: '/',
+    name: 'calcRoute',
+    component: Layout,
+    hidden: true,
+    redirect: '/calcRoute',
+    children: [
+      {
+        path: '/calcRoute',
+        name: "calcRoute",
+        meta: { title: '路线计算', icon: 'iconfont icon-route' },
+        component: () => import('@/components/calcRoute/index.vue')
+      }
+    ]
+  },
+
+  {
     path: '/testroute',
     name: 'testroute',
     component: Layout,
-    hidden: true,
+    hidden: false,
     meta: { title: '测试路由', icon: 'iconfont icon-peisong2' },
     redirect: '/testroute1',
     children: [
@@ -48,12 +94,12 @@ export const RouterMap = [
       {
         path: '/uploadtest',
         name: "uploadtest",
-        meta: { title: 'Excel上传', icon: 'iconfont icon-Excel' },
+        meta: { title: '地图节点录入', icon: 'iconfont icon-Excel' },
         component: () => import('@/components/File/uploadTest.vue')
       }, {
         path: '/nodelist',
         name: "nodelist",
-        meta: { title: '节点管理', icon: 'iconfont icon-node1' },
+        meta: { title: '地图管理', icon: 'iconfont icon-node1' },
         component: () => import('@/components/NodeList/index.vue')
       },
       {

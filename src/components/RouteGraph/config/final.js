@@ -37,14 +37,6 @@ const getCooOptions = (data, links) => {
             }
         },
         color: '#949494',
-        // legend: {
-        //     data: ['节点', '小车1', '小车2'],
-        //     selected: {
-        //         '节点': true,
-        //         '小车1': false,
-        //         '小车2': false
-        //     }
-        // },
         tooltip: {},
         animationDurationUpdate: 1500,
         animationEasingUpdate: 'quinticInOut',
