@@ -9,12 +9,14 @@
       </el-table-column>
       <el-table-column prop="sheetName" label="数据名" width="180">
       </el-table-column>
-      <el-table-column
-        prop="type"
-        label="类型"
-        :formatter="formatterType"
-        width="180"
-      >
+      <el-table-column prop="type" label="类型" width="180">
+        <template slot-scope="scope">
+          <el-tag
+            :type="scope.row.type === 'coodinate' ? 'primary' : 'success'"
+            close-transition
+            >{{ scope.row.type === 'coodinate' ? '坐标' : '距离' }}</el-tag
+          >
+        </template>
       </el-table-column>
       <el-table-column label="节点数量" width="180" :formatter="formatterCount">
       </el-table-column>
@@ -131,11 +133,11 @@ export default {
       isShowDisDialog: false,
       CooInfo: [],
       disInfo: {},
-      tempqt: [],
+      tempqt: []
     }
   },
   created() {
-    this.$axios('/getNodeList').then((res) => {
+    this.$axios('/getNodeList').then(res => {
       if (res.data.statu == 100) {
         this.list = res.data.data
         console.log(res)
@@ -143,13 +145,6 @@ export default {
     })
   },
   methods: {
-    formatterType(row) {
-      if (row.type == 'coodinate') {
-        return '节点'
-      } else if (row.type == 'distance') {
-        return '关系'
-      }
-    },
     formatterCount(row) {
       if (row.type == 'coodinate') {
         return row.cooData.length
@@ -179,15 +174,15 @@ export default {
       console.log(scope)
       this.$alert('确定吗确定吗', '删除', {
         confirmButtonText: '确定',
-        callback: (action) => {
+        callback: () => {
           const item = {
-            id: scope.row.id,
+            id: scope.row.id
           }
-          this.$axios.post('/deleteNode', item).then((res) => {
+          this.$axios.post('/deleteNode', item).then(res => {
             if (res.data.statu == 100) {
               this.$message({
                 message: res.data.msg,
-                type: 'success',
+                type: 'success'
               })
             }
           })
@@ -199,10 +194,10 @@ export default {
           })
 
           row.splice(i, 1)
-        },
+        }
       })
     },
-    exportExcel(scope, list) {
+    exportExcel(scope) {
       console.log('export data row', scope.row)
       if (scope.row.type == 'coodinate') {
         let data = scope.row.cooData
@@ -211,22 +206,22 @@ export default {
           A: '客户点',
           B: '横坐标',
           C: '纵坐标',
-          D: '需求量',
+          D: '需求量'
         })
-        data.forEach((item) => {
+        data.forEach(item => {
           table.push({
             A: item.name,
             B: item.x,
             C: item.y,
-            D: item.qt,
+            D: item.qt
           })
         })
         const wb = XLSX.utils.book_new()
         const ws = XLSX.utils.json_to_sheet(table, {
           header: ['A', 'B', 'C', 'D'],
-          skipHeader: true,
+          skipHeader: true
         })
-        ws['!cols'] = [{ width: 8 }, { width: 8 }, { width: 8 }, { width: 8 }]
+        ws['!cols'] = [{ width: 5 }, { width: 5 }, { width: 5 }, { width: 5 }]
 
         //sheet写入book
         XLSX.utils.book_append_sheet(wb, ws, 'file')
@@ -245,27 +240,33 @@ export default {
           }
           headerObj[index] = String(index)
         })
-        console.log('obj', headerObj)
+        console.log('headerObj', headerObj)
         table.push(headerObj)
-        data.forEach((row) => {
+        data.forEach(row => {
           table.push(row)
         })
+
         let headerArr = Object.keys(headerObj)
         headerArr.pop()
         headerArr.unshift('name')
+        console.log('headerArr', headerArr)
         const wb = XLSX.utils.book_new()
         const ws = XLSX.utils.json_to_sheet(table, {
           header: headerArr,
-          skipHeader: true,
+          skipHeader: true
         })
         //sheet写入book
-        XLSX.utils.book_append_sheet(wb, ws, 'file')
-        //输出
-        const name = scope.row.sheetName + new Date().toDateString()
-        XLSX.writeFile(wb, name + '.xlsx')
+        const sheetName = 'file'
+        XLSX.utils.book_append_sheet(wb, ws, sheetName)
+        wb.Sheets[sheetName].A1.v = 'name'
+
+        //TODO 需求量放到表2
+
+        const fileName = scope.row.sheetName + new Date().toDateString()
+        XLSX.writeFile(wb, fileName + '.xlsx')
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

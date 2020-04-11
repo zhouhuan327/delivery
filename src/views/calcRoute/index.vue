@@ -7,6 +7,7 @@
       label-position="right"
     >
       <el-row>
+        <p class="divide-line">地图配置</p>
         <el-form-item label="数据">
           <el-select
             @change="setCount"
@@ -28,10 +29,10 @@
                 </el-col>
                 <el-col style="float: right; margin-right: 10px;" :span="4">
                   <template v-if="item.type == 'coodinate'">
-                    <el-tag type="success">坐标</el-tag>
+                    <el-tag type="primary">坐标</el-tag>
                   </template>
                   <template v-if="item.type == 'distance'">
-                    <el-tag type="info">距离</el-tag>
+                    <el-tag type="success">距离</el-tag>
                   </template>
                 </el-col>
               </el-row>
@@ -41,23 +42,45 @@
         <el-form-item label="客户数">
           <el-input v-model="parama.n" disabled></el-input>
         </el-form-item>
+      </el-row>
+      <p class="divide-line">车辆配置</p>
+      <el-row>
         <el-form-item label="车数量">
-          <el-input v-model.number="parama.m"></el-input>
+          <el-input v-model.number="parama.m" style="width:150px"></el-input>
+        </el-form-item>
+        <el-form-item label="大车载货量">
+          <el-input v-model.number="parama.q" style="width:150px"></el-input>
+        </el-form-item>
+        <el-form-item label="小车载货量">
+          <el-input
+            v-model.number="parama.smallq"
+            style="width:150px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="最大里程数">
+          <el-input
+            v-model.number="parama.maxroad"
+            style="width:150px"
+          ></el-input>
         </el-form-item>
       </el-row>
-
-      <el-form-item label="载重上限">
-        <el-input v-model.number="parama.q"></el-input>
-      </el-form-item>
-      <el-form-item label="最大里程数">
-        <el-input v-model.number="parama.maxroad"></el-input>
-      </el-form-item>
-      <el-form-item label="种群规模">
-        <el-input v-model.number="parama.sizepop"></el-input>
-      </el-form-item>
-      <el-form-item label="迭代次数">
-        <el-input v-model.number="parama.maxgen"></el-input>
-      </el-form-item>
+      <el-row>
+        <p class="divide-line">参数配置</p>
+        <el-form-item label="种群规模">
+          <el-input v-model.number="parama.sizepop"></el-input>
+        </el-form-item>
+        <el-form-item label="迭代次数">
+          <el-input v-model.number="parama.maxgen"></el-input>
+        </el-form-item>
+      </el-row>
+      <el-row>
+        <el-form-item label="模型">
+          <el-radio-group v-model="parama.model">
+            <el-radio label="局部最优解"></el-radio>
+            <el-radio label="全局最优解"></el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-row>
       <el-row>
         <el-form-item label="考虑配送时间">
           <el-switch v-model="parama.isTime"></el-switch>
@@ -75,14 +98,6 @@
             </el-form-item>
           </div>
         </transition>
-      </el-row>
-      <el-row>
-        <el-form-item label="模型">
-          <el-radio-group v-model="parama.model">
-            <el-radio label="局部最优解"></el-radio>
-            <el-radio label="全局最优解"></el-radio>
-          </el-radio-group>
-        </el-form-item>
       </el-row>
     </el-form>
     <el-button size="small" @click="default_coo" round>坐标默认值</el-button>
@@ -124,7 +139,7 @@ import Graph from '@/components/RouteGraph/Graph'
 export default {
   name: 'calcRoute',
   components: {
-    Graph,
+    Graph
   },
   data() {
     return {
@@ -134,25 +149,26 @@ export default {
         id: '', // 节点ID
         n: 0, //客户数，
         m: null, //车数量
-        q: null, //载重上限
+        q: null, //大车载货量
         maxroad: null, //最大里程数
         sizepop: null, //种群规模
         maxgen: null, //迭代次数
         isTime: false,
         model: '',
+        smallq: 3
       },
       optionList: [],
       isLoading: false,
-      graphData: {},
+      graphData: {}
     }
   },
   created() {
-    this.$axios('/getNodeList').then((res) => {
+    this.$axios('/getNodeList').then(res => {
       if (res.data.statu == 100) {
         const list = res.data.data
         console.log('getList', list)
         const optionList = []
-        list.forEach((item) => {
+        list.forEach(item => {
           let count =
             item.cooData.length == 0 ? item.disData.length : item.cooData.length
           let data = item.cooData.length == 0 ? item.disData : item.cooData
@@ -161,7 +177,7 @@ export default {
             name: item.sheetName,
             type: item.type,
             count: count,
-            data: data,
+            data: data
           })
         })
         this.optionList = optionList
@@ -171,14 +187,15 @@ export default {
   methods: {
     startCalc() {
       this.isLoading = true
+      this.isShowDetailBtn = false
       console.log('传入的', this.parama)
       this.$axios
         .post('/calc', this.parama)
-        .then((res) => {
+        .then(res => {
           if (res.data.statu == 100) {
             this.$message({
               message: res.data.msg,
-              type: 'success',
+              type: 'success'
             })
             this.isLoading = false
             console.log('计算结果', res.data)
@@ -187,12 +204,12 @@ export default {
           } else {
             this.$message({
               message: res.data.msg,
-              type: 'error',
+              type: 'error'
             })
             this.isLoading = false
           }
         })
-        .catch((error) => {
+        .catch(error => {
           this.isLoading = false
           console.log(error)
         })
@@ -206,7 +223,7 @@ export default {
         exInfo.push({
           name: `车${index + 1}`,
           distance: Math.floor(item),
-          weight: Math.floor(tempwei[index]),
+          weight: Math.floor(tempwei[index])
         })
       })
       this.graphData.exInfo = exInfo
@@ -223,10 +240,13 @@ export default {
       }
       let link = []
       res.forEach((item, index) => {
+        let smallWeight = this.parama.smallq
+        let carType = exInfo[index].weight <= smallWeight ? 'small' : 'big'
         link.push({
           name: `车${index + 1}`,
           value: item,
           index: index,
+          carType: carType
         })
       })
       this.graphData.link = link
@@ -235,7 +255,7 @@ export default {
       console.log(' this.graphData', this.graphData)
     },
     setCount(id) {
-      this.optionList.forEach((item) => {
+      this.optionList.forEach(item => {
         if (item.id == id) {
           this.parama.n = item.count - 1
           this.graphData.data = item.data
@@ -259,12 +279,30 @@ export default {
       this.parama.maxroad = 50
       this.parama.sizepop = 50
       this.parama.maxgen = 100
-    },
-  },
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
 .calcRoute {
+  .divide-line {
+    position: relative;
+    display: block;
+    font-size: 14px;
+    color: #8e8a8ad1;
+    margin-left: 10px;
+    user-select: none;
+    margin-bottom: 20px;
+    &::after {
+      content: '';
+      position: absolute;
+      width: 60%;
+      height: 1px;
+      background: #f0e3e373;
+      top: 50%;
+      margin-left: 10px;
+    }
+  }
 }
 </style>

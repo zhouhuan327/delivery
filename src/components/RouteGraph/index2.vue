@@ -91,7 +91,7 @@ export default {
       })
       return res
     },
-    changeOption(e) {
+    changeOption() {
       console.log('选中的', this.checkedRoute)
       let newlinks = []
       this.checkedRoute.forEach((item) => {

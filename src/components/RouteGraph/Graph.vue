@@ -16,10 +16,13 @@
               :key="item.index"
             >
               <div class="route-btn-content">
-                <span
-                  :style="{ background: item.color }"
-                  class="color-block"
-                ></span>
+                <i
+                  :style="{ color: item.color }"
+                  class="color-block iconfont "
+                  :class="
+                    item.carType == 'small' ? 'icon-xiaoche' : 'icon-dache'
+                  "
+                ></i>
                 <span class="color-block-name">{{ item.name }}</span>
               </div></el-checkbox-button
             >
@@ -29,8 +32,9 @@
     </el-row>
     <el-row>
       <el-col :span="16"
-        ><div id="chart" ref="mychart" class="chart"></div
-      ></el-col>
+        ><div id="chart" ref="mychart" class="chart"></div>
+        <p class="tip">*由距离展示的路径图中，配送点位置不代表真实位置</p>
+      </el-col>
       <el-col :span="8">
         <template v-for="item in exInfo">
           <el-card :key="item.name" class="box-card">
@@ -53,7 +57,7 @@ const colorMap = [
   '#61a0a8',
   '#d48265',
   '#91c7ae',
-  '#6e7074',
+  '#6e7074'
 ]
 export default {
   name: 'route-graph',
@@ -66,7 +70,7 @@ export default {
       nodeData: [],
       linkData: [],
       exInfo: [],
-      option: {}, //!配置项
+      option: {} //!配置项
     }
   },
   mounted() {
@@ -75,15 +79,19 @@ export default {
   },
   watch: {
     gData: {
-      immediate: true,
-      handler(newV, oldV) {
+      // immediate: true,
+      handler(newV) {
         // do something, 可使用this
+        this.links = []
+        this.linkData = []
+        this.nodeData = []
+        this.checkedRoute = []
         this.graphData = newV
         this.initData()
         console.log('watch监听:', newV)
-      },
-      deep: true,
-    },
+      }
+      // deep: true
+    }
   },
   components: {},
   methods: {
@@ -96,16 +104,14 @@ export default {
         let distanceNodeData = []
         this.graphData.data.forEach((item, index) => {
           distanceNodeData.push({
-            name: index + '',
+            name: index + ''
           })
         })
         this.nodeData = distanceNodeData
         this.option = getDisOptions //! 引力图的配置项
       }
       this.linkData = this.graphData.link // 路径
-      this.linkData.forEach(
-        (item) => (item.color = this.chooseColor(item.index))
-      )
+      this.linkData.forEach(item => (item.color = this.chooseColor(item.index)))
       this.exInfo = this.graphData.exInfo // 车信息
       this.checkedRoute.push(this.linkData[0]) //选中的路径
       this.links = this.formatterLinks(this.linkData[0].value, colorMap[0]) //第一辆车的路径
@@ -131,11 +137,11 @@ export default {
             target: arr[index + 1],
             label: {
               show: false,
-              fontSize: 13,
+              fontSize: 13
             },
             lineStyle: {
-              color: color,
-            },
+              color: color
+            }
           })
         }
       })
@@ -144,7 +150,7 @@ export default {
     changeOption() {
       console.log('选中的', this.checkedRoute)
       let newlinks = []
-      this.checkedRoute.forEach((item) => {
+      this.checkedRoute.forEach(item => {
         const data = this.formatterLinks(
           item.value,
           this.chooseColor(item.index)
@@ -164,8 +170,8 @@ export default {
         i = index % len
       }
       return colorMap[i]
-    },
-  },
+    }
+  }
 }
 </script>
 
@@ -184,6 +190,10 @@ export default {
   .chart {
     height: 70vh;
   }
+  .tip {
+    text-align: center;
+    color: #8e8a8ad1;
+  }
   .box-card {
     margin-bottom: 10px;
     p {
@@ -195,11 +205,12 @@ export default {
       display: flex;
       font-size: 13px;
       .color-block {
-        width: 18px;
-        height: 12px;
-        border-radius: 4px;
-        background: gray;
+        // width: 18px;
+        // height: 12px;
+        // border-radius: 4px;
+        // background: gray;
         margin-right: 10px;
+        color: gray;
       }
     }
   }

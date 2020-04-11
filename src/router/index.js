@@ -15,7 +15,7 @@ export const RouterMap = [
         path: '/home',
         name: 'home',
         meta: { title: '首页', icon: 'iconfont icon-xuanzhongshangcheng' },
-        component: () => import('@/views/Home.vue')
+        component: () => import('@/views/TeamInfo.vue')
       }
     ]
   },
@@ -30,7 +30,7 @@ export const RouterMap = [
         path: '/upload',
         name: "upload",
         meta: { title: '地图节点录入', icon: 'iconfont icon-Excel' },
-        component: () => import('@/components/File/uploadTest.vue')
+        component: () => import('@/views/File/uploadTest.vue')
       }
     ]
   },
@@ -45,7 +45,7 @@ export const RouterMap = [
         path: '/nodelist',
         name: "nodelist",
         meta: { title: '地图管理', icon: 'iconfont icon-node1' },
-        component: () => import('@/components/NodeList/index.vue')
+        component: () => import('@/views/NodeList/index.vue')
       }
     ]
   },
@@ -60,7 +60,7 @@ export const RouterMap = [
         path: '/calcRoute',
         name: "calcRoute",
         meta: { title: '路线计算', icon: 'iconfont icon-route' },
-        component: () => import('@/components/calcRoute/index.vue')
+        component: () => import('@/views/calcRoute/index.vue')
       }
     ]
   },
@@ -95,18 +95,18 @@ export const RouterMap = [
         path: '/uploadtest',
         name: "uploadtest",
         meta: { title: '地图节点录入', icon: 'iconfont icon-Excel' },
-        component: () => import('@/components/File/uploadTest.vue')
+        component: () => import('@/views/File/uploadTest.vue')
       }, {
         path: '/nodelist',
         name: "nodelist",
         meta: { title: '地图管理', icon: 'iconfont icon-node1' },
-        component: () => import('@/components/NodeList/index.vue')
+        component: () => import('@/views/NodeList/index.vue')
       },
       {
         path: '/calcRoute',
         name: "calcRoute",
         meta: { title: '路线计算', icon: 'iconfont icon-route' },
-        component: () => import('@/components/calcRoute/index.vue')
+        component: () => import('@/views/calcRoute/index.vue')
       }
     ]
 
