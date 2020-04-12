@@ -5,71 +5,74 @@
       :inline="true"
       label-width="100px"
       label-position="right"
+      :rules="rules"
+      ref="form"
     >
       <el-row>
         <p class="divide-line">地图配置</p>
-        <el-form-item label="数据">
-          <el-select
-            @change="setCount"
-            v-model="parama.id"
-            placeholder="请选择节点数据"
-          >
-            <el-option
-              v-for="item in optionList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
+        <el-tooltip
+          class="item"
+          effect="dark"
+          content="选择地图数据集,数据详情可在'地图管理'查看"
+          placement="top"
+        >
+          <el-form-item v-popover:popover-data label="地图数据" prop="id">
+            <el-select
+              @change="setCount"
+              v-model="parama.id"
+              placeholder="请选择节点数据"
             >
-              <el-row>
-                <el-col :span="4">
-                  {{ item.id }}
-                </el-col>
-                <el-col :span="12">
-                  {{ item.name }}
-                </el-col>
-                <el-col style="float: right; margin-right: 10px;" :span="4">
-                  <template v-if="item.type == 'coodinate'">
-                    <el-tag type="primary">坐标</el-tag>
-                  </template>
-                  <template v-if="item.type == 'distance'">
-                    <el-tag type="success">距离</el-tag>
-                  </template>
-                </el-col>
-              </el-row>
-            </el-option>
-          </el-select>
-        </el-form-item>
+              <el-option
+                v-for="item in optionList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              >
+                <el-row>
+                  <el-col :span="4">
+                    {{ item.id }}
+                  </el-col>
+                  <el-col :span="12">
+                    {{ item.name }}
+                  </el-col>
+                  <el-col style="float: right; margin-right: 10px;" :span="4">
+                    <template v-if="item.type == 'coodinate'">
+                      <el-tag type="primary">坐标</el-tag>
+                    </template>
+                    <template v-if="item.type == 'distance'">
+                      <el-tag type="success">距离</el-tag>
+                    </template>
+                  </el-col>
+                </el-row>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-tooltip>
         <el-form-item label="客户数">
           <el-input v-model="parama.n" disabled></el-input>
         </el-form-item>
       </el-row>
       <p class="divide-line">车辆配置</p>
       <el-row>
-        <el-form-item label="车数量">
+        <el-form-item label="车数量" prop="m">
           <el-input v-model.number="parama.m" style="width:150px"></el-input>
         </el-form-item>
-        <el-form-item label="大车载货量">
-          <el-input v-model.number="parama.q" style="width:150px"></el-input>
+        <el-form-item label="大车载货量" prop="q">
+          <el-input v-model="parama.q" style="width:150px"></el-input>
         </el-form-item>
-        <el-form-item label="小车载货量">
-          <el-input
-            v-model.number="parama.smallq"
-            style="width:150px"
-          ></el-input>
+        <el-form-item label="小车载货量" prop="smallq">
+          <el-input v-model="parama.smallq" style="width:150px"></el-input>
         </el-form-item>
-        <el-form-item label="最大里程数">
-          <el-input
-            v-model.number="parama.maxroad"
-            style="width:150px"
-          ></el-input>
+        <el-form-item label="最大里程数" prop="maxroad">
+          <el-input v-model="parama.maxroad" style="width:150px"></el-input>
         </el-form-item>
       </el-row>
       <el-row>
         <p class="divide-line">参数配置</p>
-        <el-form-item label="种群规模">
+        <el-form-item label="种群规模" prop="sizepop">
           <el-input v-model.number="parama.sizepop"></el-input>
         </el-form-item>
-        <el-form-item label="迭代次数">
+        <el-form-item label="迭代次数" prop="maxgen">
           <el-input v-model.number="parama.maxgen"></el-input>
         </el-form-item>
       </el-row>
@@ -100,8 +103,7 @@
         </transition>
       </el-row>
     </el-form>
-    <el-button size="small" @click="default_coo" round>坐标默认值</el-button>
-    <el-button size="mini" @click="default_dis" round>距离默认值</el-button>
+    <el-button size="small" @click="setDefault" round>生成随机参数</el-button>
     <el-button
       size="medium"
       type="primary"
@@ -125,10 +127,8 @@
     <el-dialog :visible.sync="dialogVisible" width="70%">
       <Graph :gData="graphData"></Graph>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false"
-          >确 定</el-button
-        >
+        <el-button @click="dialogVisible = false">关闭</el-button>
+        <el-button @click="saveResult" type="primary">保存结果</el-button>
       </span>
     </el-dialog>
   </div>
@@ -146,7 +146,7 @@ export default {
       isShowDetailBtn: false,
       dialogVisible: false,
       parama: {
-        id: '', // 节点ID
+        id: null, // 节点ID
         n: 0, //客户数，
         m: null, //车数量
         q: null, //大车载货量
@@ -155,10 +155,43 @@ export default {
         maxgen: null, //迭代次数
         isTime: false,
         model: '',
-        smallq: 3
+        smallq: 6
+      },
+      rules: {
+        id: [{ required: true, message: '请选择地图数据', trigger: 'change' }],
+        m: [{ required: true, message: '请输入车数量', trigger: 'change' }],
+        q: [
+          { required: true, message: '请输入大车载货量', trigger: 'change' },
+          {
+            pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
+            message: '请输入合法的数字，最多两位小数',
+            trigger: 'change'
+          }
+        ],
+        smallq: [
+          { required: true, message: '请输入小车载货量', trigger: 'change' },
+          {
+            pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
+            message: '请输入合法的数字，最多两位小数',
+            trigger: 'change'
+          }
+        ],
+        maxroad: [
+          { required: true, message: '请输最大里程数', trigger: 'change' },
+          {
+            pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
+            message: '请输入合法的数字，最多两位小数',
+            trigger: 'change'
+          }
+        ],
+        sizepop: [
+          { required: true, message: '请输种群规模', trigger: 'change' }
+        ],
+        maxgen: [{ required: true, message: '请输迭代次数', trigger: 'change' }]
       },
       optionList: [],
       isLoading: false,
+      originData: {}, //请求返回的原始数据
       graphData: {}
     }
   },
@@ -186,33 +219,41 @@ export default {
   },
   methods: {
     startCalc() {
-      this.isLoading = true
-      this.isShowDetailBtn = false
       console.log('传入的', this.parama)
-      this.$axios
-        .post('/calc', this.parama)
-        .then(res => {
-          if (res.data.statu == 100) {
-            this.$message({
-              message: res.data.msg,
-              type: 'success'
+      this.$refs['form'].validate(valid => {
+        if (valid) {
+          this.isLoading = true
+          this.isShowDetailBtn = false
+          this.$axios
+            .post('/calc', this.parama)
+            .then(res => {
+              if (res.data.statu == 100) {
+                this.$message({
+                  message: res.data.msg,
+                  type: 'success'
+                })
+                this.isLoading = false
+                console.log('计算结果', res.data)
+                this.originData = res.data.data
+                this.setGraphData(res.data.data) //处理路径
+                this.isShowDetailBtn = true
+              } else {
+                this.$message({
+                  message: res.data.msg,
+                  type: 'error'
+                })
+                this.isLoading = false
+              }
             })
-            this.isLoading = false
-            console.log('计算结果', res.data)
-            this.setGraphData(res.data.data) //处理路径
-            this.isShowDetailBtn = true
-          } else {
-            this.$message({
-              message: res.data.msg,
-              type: 'error'
+            .catch(error => {
+              this.isLoading = false
+              console.log(error)
             })
-            this.isLoading = false
-          }
-        })
-        .catch(error => {
-          this.isLoading = false
-          console.log(error)
-        })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
     },
     setGraphData(data) {
       // 处理载货量和行驶距离
@@ -222,8 +263,8 @@ export default {
       tempdis.forEach((item, index) => {
         exInfo.push({
           name: `车${index + 1}`,
-          distance: Math.floor(item),
-          weight: Math.floor(tempwei[index])
+          distance: item.toFixed(3),
+          weight: tempwei[index].toFixed(3)
         })
       })
       this.graphData.exInfo = exInfo
@@ -266,19 +307,27 @@ export default {
     showGraphDialog() {
       this.dialogVisible = true
     },
-    default_coo() {
-      this.parama.m = 5
-      this.parama.q = 8
-      this.parama.maxroad = 50
-      this.parama.sizepop = 100
-      this.parama.maxgen = 100
+    setDefault() {
+      let kehushu = this.parama.n
+      this.parama.m =
+        kehushu == 0 ? 5 : this.getRamdon(kehushu / 2 - 1, kehushu - 1)
+      this.parama.q = this.getRamdon(5, 20)
+      this.parama.smallq = this.parama.q / 2
+      this.parama.maxroad = this.getRamdon(40, 70)
+      this.parama.sizepop = this.getRamdon(30, 200)
+      this.parama.maxgen = this.getRamdon(30, 200)
     },
-    default_dis() {
-      this.parama.m = 3
-      this.parama.q = 8
-      this.parama.maxroad = 50
-      this.parama.sizepop = 50
-      this.parama.maxgen = 100
+    getRamdon(start, end, fixed = 0) {
+      let differ = end - start
+      let random = Math.random()
+      return (start + differ * random).toFixed(fixed)
+    },
+    saveResult() {
+      const result = {}
+      result.originData = this.originData
+      result.parama = this.parama
+      result.graphData = this.graphData
+      console.log('保存的res', result)
     }
   }
 }

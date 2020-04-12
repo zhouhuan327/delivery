@@ -1,7 +1,9 @@
 <template>
   <div class="route-graph">
     <el-row class="bar">
-      <el-col :span="4"><span class="title">配送路线图</span></el-col>
+      <el-col :span="3">
+        <p class="title">配送路线图</p>
+      </el-col>
       <el-col :span="20">
         <div class="route-check">
           <el-checkbox-group
@@ -33,9 +35,15 @@
     <el-row>
       <el-col :span="16"
         ><div id="chart" ref="mychart" class="chart"></div>
-        <p class="tip">*由距离展示的路径图中，配送点位置不代表真实位置</p>
+        <p v-show="graphData.type == 'distance'" class="tip">
+          *由距离展示的路径图中，配送点位置不代表真实位置
+        </p>
       </el-col>
       <el-col :span="8">
+        <span><i class="iconfont icon-xiaoche"></i>小车</span>
+        <span style="margin-left:10px"
+          ><i class="iconfont icon-dache"></i>大车</span
+        >
         <template v-for="item in exInfo">
           <el-card :key="item.name" class="box-card">
             <p>{{ item.name }}</p>
@@ -147,7 +155,7 @@ export default {
       return res
     },
     changeOption() {
-      console.log('选中的', this.checkedRoute)
+      // console.log('选中的', this.checkedRoute)
       let newlinks = []
       this.checkedRoute.forEach(item => {
         const data = this.formatterLinks(
@@ -194,9 +202,9 @@ export default {
     color: #8e8a8ad1;
   }
   .box-card {
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     p {
-      margin-bottom: 10px;
+      margin-bottom: 5px;
     }
   }
   .route-btn {

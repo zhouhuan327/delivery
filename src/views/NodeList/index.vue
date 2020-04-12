@@ -234,56 +234,59 @@ export default {
         const name = scope.row.sheetName + new Date().toDateString()
         XLSX.writeFile(wb, name + '.xlsx')
       } else if (scope.row.type == 'distance') {
-        let data = scope.row.disData
-        data.forEach((item, index) => (item.name = index))
-        let table = []
-        let headerObj = {}
-        //根据数据长度动态生成表头
-        data.forEach((item, index) => {
-          if (index == 0) {
-            headerObj['name'] = String(index)
-          }
-          headerObj[index] = String(index)
-        })
-        // console.log('headerObj', headerObj)
-        table.push(headerObj)
-        data.forEach(row => {
-          table.push(row)
-        })
-
-        let headerArr = Object.keys(headerObj)
-        headerArr.pop()
-        headerArr.unshift('name')
-        // console.log('headerArr', headerArr)
-        const wb = XLSX.utils.book_new()
-        const ws = XLSX.utils.json_to_sheet(table, {
-          header: headerArr,
-          skipHeader: true
-        })
-        //sheet写入book
-        const sheetName = '距离'
-        XLSX.utils.book_append_sheet(wb, ws, sheetName)
-        wb.Sheets[sheetName].A1.v = 'name'
-
-        //TODO 需求量放到表2
-        let qttable = []
-        let qtheader = {}
-        let qtdata = {}
-        let temp = scope.row.qtdata
-        temp.unshift(0)
-        temp.forEach((item, index) => {
-          qtheader[index] = index
-          qtdata[index] = item
-        })
-        qttable.push(qtheader)
-        qttable.push(qtdata)
-        const ws2 = XLSX.utils.json_to_sheet(qttable, {
-          header: Object.keys(qtheader),
-          skipHeader: true
-        })
-        XLSX.utils.book_append_sheet(wb, ws2, '需求量')
+        let data = scope.row
+        let wb = data.wb
         const fileName = scope.row.sheetName + new Date().toDateString()
         XLSX.writeFile(wb, fileName + '.xlsx')
+        // data.forEach((item, index) => (item.name = index))
+        // let table = []
+        // let headerObj = {}
+        // //根据数据长度动态生成表头
+        // data.forEach((item, index) => {
+        //   if (index == 0) {
+        //     headerObj['name'] = String(index)
+        //   }
+        //   headerObj[index] = String(index)
+        // })
+        // // console.log('headerObj', headerObj)
+        // table.push(headerObj)
+        // data.forEach(row => {
+        //   table.push(row)
+        // })
+
+        // let headerArr = Object.keys(headerObj)
+        // headerArr.pop()
+        // headerArr.unshift('name')
+        // // console.log('headerArr', headerArr)
+        // const wb = XLSX.utils.book_new()
+        // const ws = XLSX.utils.json_to_sheet(table, {
+        //   header: headerArr,
+        //   skipHeader: true
+        // })
+        // //sheet写入book
+        // const sheetName = '距离'
+        // XLSX.utils.book_append_sheet(wb, ws, sheetName)
+        // wb.Sheets[sheetName].A1.v = 'name'
+
+        // //TODO 需求量放到表2
+        // let qttable = []
+        // let qtheader = {}
+        // let qtdata = {}
+        // let temp = scope.row.qtdata
+        // temp.unshift(0)
+        // temp.forEach((item, index) => {
+        //   qtheader[index] = index
+        //   qtdata[index] = item
+        // })
+        // qttable.push(qtheader)
+        // qttable.push(qtdata)
+        // const ws2 = XLSX.utils.json_to_sheet(qttable, {
+        //   header: Object.keys(qtheader),
+        //   skipHeader: true
+        // })
+        // XLSX.utils.book_append_sheet(wb, ws2, '需求量')
+        // const fileName = scope.row.sheetName + new Date().toDateString()
+        // XLSX.writeFile(wb, fileName + '.xlsx')
       }
     }
   }
