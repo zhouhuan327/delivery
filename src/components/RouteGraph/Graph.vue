@@ -81,7 +81,6 @@ export default {
     gData: {
       // immediate: true,
       handler(newV) {
-        // do something, 可使用this
         this.links = []
         this.linkData = []
         this.nodeData = []
@@ -159,7 +158,7 @@ export default {
       })
       this.links = newlinks
       this.drawGraph()
-      console.log('转换后', newlinks)
+      // console.log('转换后', newlinks)
     },
     chooseColor(index) {
       let len = colorMap.length
