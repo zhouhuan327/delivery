@@ -14,38 +14,8 @@ export const RouterMap = [
       {
         path: '/home',
         name: 'home',
-        meta: { title: '首页', icon: 'iconfont icon-xuanzhongshangcheng' },
+        meta: { title: '首页', icon: 'iconfont icon-index' },
         component: () => import('@/views/TeamInfo.vue')
-      }
-    ]
-  },
-  {
-    path: '/',
-    name: 'upload',
-    component: Layout,
-    hidden: true,
-    redirect: '/upload',
-    children: [
-      {
-        path: '/upload',
-        name: "upload",
-        meta: { title: '地图节点录入', icon: 'iconfont icon-Excel' },
-        component: () => import('@/views/File/uploadTest.vue')
-      }
-    ]
-  },
-  {
-    path: '/',
-    name: 'nodelist',
-    component: Layout,
-    hidden: true,
-    redirect: '/nodelist',
-    children: [
-      {
-        path: '/nodelist',
-        name: "nodelist",
-        meta: { title: '地图管理', icon: 'iconfont icon-node1' },
-        component: () => import('@/views/NodeList/index.vue')
       }
     ]
   },
@@ -79,6 +49,37 @@ export const RouterMap = [
       }
     ]
   },
+  {
+    path: '/',
+    name: 'upload',
+    component: Layout,
+    hidden: true,
+    redirect: '/upload',
+    children: [
+      {
+        path: '/upload',
+        name: "upload",
+        meta: { title: '地图节点录入', icon: 'iconfont icon-Excel' },
+        component: () => import('@/views/File/uploadTest.vue')
+      }
+    ]
+  },
+  {
+    path: '/',
+    name: 'nodelist',
+    component: Layout,
+    hidden: true,
+    redirect: '/nodelist',
+    children: [
+      {
+        path: '/nodelist',
+        name: "nodelist",
+        meta: { title: '地图管理', icon: 'iconfont icon-node1' },
+        component: () => import('@/views/NodeList/index.vue')
+      }
+    ]
+  },
+
 
   {
     path: '/testroute',

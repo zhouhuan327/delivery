@@ -40,10 +40,6 @@
         </p>
       </el-col>
       <el-col :span="8">
-        <span><i class="iconfont icon-xiaoche"></i>小车</span>
-        <span style="margin-left:10px"
-          ><i class="iconfont icon-dache"></i>大车</span
-        >
         <template v-for="item in exInfo">
           <el-card :key="item.name" class="box-card">
             <p>{{ item.name }}</p>

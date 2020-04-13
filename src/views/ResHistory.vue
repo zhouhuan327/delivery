@@ -7,14 +7,15 @@
         <template slot-scope="scope">
           <el-button
             @click.native.prevent="showDetail(scope)"
-            type="text"
+            type="primary"
             size="small"
+            plain
           >
             详情
           </el-button>
           <el-button
             @click.native.prevent="exportExcel(scope, list)"
-            type="text"
+            type="info"
             size="small"
           >
             导出
@@ -23,6 +24,12 @@
       </el-table-column>
     </el-table>
     <el-dialog :visible.sync="dialogVisible" width="70%">
+      <div slot="title">
+        <span><i class="iconfont icon-xiaoche"></i>小车</span>
+        <span style="margin-left:10px"
+          ><i class="iconfont icon-dache"></i>大车</span
+        >
+      </div>
       <Graph :gData="selectedNow"></Graph>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">关闭</el-button>
