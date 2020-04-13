@@ -162,6 +162,13 @@ export default {
     Graph
   },
   data() {
+    const zeroCheck = (rule, value, callback) => {
+      if (value == 0) {
+        return callback(new Error('不能为0'))
+      } else {
+        callback()
+      }
+    }
     return {
       isLoadingExport: false,
       isShowDetailBtn: false,
@@ -180,14 +187,23 @@ export default {
       },
       rules: {
         id: [{ required: true, message: '请选择地图数据', trigger: 'change' }],
-        m: [{ required: true, message: '请输入车数量', trigger: 'change' }],
+        m: [
+          { required: true, message: '请输入车数量', trigger: 'change' },
+          {
+            pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
+            message: '请输入合法的数字',
+            trigger: 'change'
+          },
+          { validator: zeroCheck, trigger: 'change' }
+        ],
         q: [
           { required: true, message: '请输入大车载货量', trigger: 'change' },
           {
             pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
             message: '请输入合法的数字，最多两位小数',
             trigger: 'change'
-          }
+          },
+          { validator: zeroCheck, trigger: 'change' }
         ],
         smallq: [
           { required: true, message: '请输入小车载货量', trigger: 'change' },
@@ -195,7 +211,8 @@ export default {
             pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
             message: '请输入合法的数字，最多两位小数',
             trigger: 'change'
-          }
+          },
+          { validator: zeroCheck, trigger: 'change' }
         ],
         maxroad: [
           { required: true, message: '请输最大里程数', trigger: 'change' },
@@ -203,12 +220,17 @@ export default {
             pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
             message: '请输入合法的数字，最多两位小数',
             trigger: 'change'
-          }
+          },
+          { validator: zeroCheck, trigger: 'change' }
         ],
         sizepop: [
-          { required: true, message: '请输种群规模', trigger: 'change' }
+          { required: true, message: '请输种群规模', trigger: 'change' },
+          { validator: zeroCheck, trigger: 'change' }
         ],
-        maxgen: [{ required: true, message: '请输迭代次数', trigger: 'change' }]
+        maxgen: [
+          { required: true, message: '请输迭代次数', trigger: 'change' },
+          { validator: zeroCheck, trigger: 'change' }
+        ]
       },
       optionList: [],
       isLoading: false,
@@ -238,11 +260,19 @@ export default {
       }
     })
   },
+  watch: {
+    parama: {
+      deep: true,
+      handler() {
+        this.isShowDetailBtn = false
+      }
+    }
+  },
   methods: {
     startCalc() {
       console.log('传入的', this.parama)
       this.$refs['form'].validate(valid => {
-        if (valid) {
+        if (valid && this.carCheck()) {
           this.isLoading = true
           this.isShowDetailBtn = false
           this.$axios
@@ -299,6 +329,9 @@ export default {
           temp = []
         }
       }
+      exInfo.forEach((item, index) => {
+        item.route = res[index]
+      })
       // 处理后的计算结果
       this.calcResult.route = res
       this.calcResult.distance = data.distance
@@ -335,7 +368,7 @@ export default {
     setDefault() {
       let kehushu = this.parama.n
       this.parama.m =
-        kehushu == 0 ? 5 : this.getRamdon(kehushu / 2 - 1, kehushu - 1)
+        kehushu == 0 ? 5 : this.getRamdon(kehushu / 2 - 2, kehushu / 2 + 3)
       this.parama.q = this.getRamdon(5, 20)
       this.parama.smallq = this.parama.q / 2
       this.parama.maxroad = this.getRamdon(40, 70)
@@ -352,9 +385,16 @@ export default {
       result.calcResult = this.calcResult
       result.parama = this.parama
       result.graphData = this.graphData
+      let sheetName = ''
+      this.optionList.forEach(item => {
+        if (item.id == result.parama.id) {
+          sheetName = item.name
+        }
+      })
       let postData = {
         resultData: result,
-        createTime: ''
+        createTime: '',
+        sheetName: sheetName
       }
       console.log(postData)
       this.$axios.post('/addHistory', postData).then(res => {
@@ -377,6 +417,18 @@ export default {
       let parama = this.parama
       await exportResultExcel(calcResult, parama)
       this.isLoadingExport = false
+    },
+    carCheck() {
+      let kehushu = this.parama.n //客户数，
+      let carnum = this.parama.m
+      if (kehushu != 0 && carnum > kehushu) {
+        this.$message({
+          type: 'error',
+          message: '车数量不能大于客户数'
+        })
+        return false
+      }
+      return true
     }
   }
 }

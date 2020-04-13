@@ -49,6 +49,7 @@
             <p>{{ item.name }}</p>
             <p>行驶路程:{{ item.distance }}</p>
             <p>载货量:{{ item.weight }}</p>
+            <p>路线:{{ item.route }}</p>
           </el-card>
         </template>
       </el-col>

@@ -64,6 +64,21 @@ export const RouterMap = [
       }
     ]
   },
+  {
+    path: '/',
+    name: 'resHistory',
+    component: Layout,
+    hidden: true,
+    redirect: '/resHistory',
+    children: [
+      {
+        path: '/resHistory',
+        name: "resHistory",
+        meta: { title: '历史结果', icon: 'iconfont icon-lishijilu' },
+        component: () => import('@/views/ResHistory.vue')
+      }
+    ]
+  },
 
   {
     path: '/testroute',
