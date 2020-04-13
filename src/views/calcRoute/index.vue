@@ -125,10 +125,29 @@
       >
     </transition>
     <el-dialog :visible.sync="dialogVisible" width="70%">
+      <div class="dialog-header" slot="title">
+        <el-tooltip
+          class="item"
+          effect="dark"
+          content="保存计算结果"
+          placement="top"
+        >
+          <el-button size="small" @click="saveResult" type="primary" plain
+            >保存结果</el-button
+          >
+        </el-tooltip>
+        <el-button
+          :loading="isLoadingExport"
+          size="small"
+          @click="exportExcel"
+          type="primary"
+          plain
+          >导出为Excel</el-button
+        >
+      </div>
       <Graph :gData="graphData"></Graph>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">关闭</el-button>
-        <el-button @click="saveResult" type="primary">保存结果</el-button>
+        <el-button size="small" @click="dialogVisible = false">关闭</el-button>
       </span>
     </el-dialog>
   </div>
@@ -136,6 +155,7 @@
 
 <script>
 import Graph from '@/components/RouteGraph/Graph'
+import { exportResultExcel } from '@/utils/ExcelTool'
 export default {
   name: 'calcRoute',
   components: {
@@ -143,6 +163,7 @@ export default {
   },
   data() {
     return {
+      isLoadingExport: false,
       isShowDetailBtn: false,
       dialogVisible: false,
       parama: {
@@ -191,7 +212,7 @@ export default {
       },
       optionList: [],
       isLoading: false,
-      originData: {}, //请求返回的原始数据
+      calcResult: {}, //处理后的计算结果
       graphData: {}
     }
   },
@@ -234,7 +255,6 @@ export default {
                 })
                 this.isLoading = false
                 console.log('计算结果', res.data)
-                this.originData = res.data.data
                 this.setGraphData(res.data.data) //处理路径
                 this.isShowDetailBtn = true
               } else {
@@ -279,6 +299,11 @@ export default {
           temp = []
         }
       }
+      // 处理后的计算结果
+      this.calcResult.route = res
+      this.calcResult.distance = data.distance
+      this.calcResult.weight = data.weight
+
       let link = []
       res.forEach((item, index) => {
         let smallWeight = this.parama.smallq
@@ -323,11 +348,35 @@ export default {
       return (start + differ * random).toFixed(fixed)
     },
     saveResult() {
-      const result = {}
-      result.originData = this.originData
+      let result = {}
+      result.calcResult = this.calcResult
       result.parama = this.parama
       result.graphData = this.graphData
-      console.log('保存的res', result)
+      let postData = {
+        resultData: result,
+        createTime: ''
+      }
+      console.log(postData)
+      this.$axios.post('/addHistory', postData).then(res => {
+        if (res.data.statu == 100) {
+          this.$message({
+            message: res.data.msg,
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: res.data.msg,
+            type: 'error'
+          })
+        }
+      })
+    },
+    async exportExcel() {
+      this.isLoadingExport = true
+      let calcResult = this.calcResult
+      let parama = this.parama
+      await exportResultExcel(calcResult, parama)
+      this.isLoadingExport = false
     }
   }
 }
@@ -352,6 +401,10 @@ export default {
       top: 50%;
       margin-left: 10px;
     }
+  }
+  .dialog-header {
+    text-align: right;
+    padding-right: 40px;
   }
 }
 </style>

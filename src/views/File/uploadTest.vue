@@ -49,7 +49,7 @@
           <el-table-column label="操作" width="120">
             <template slot-scope="scope">
               <el-button
-                @click.native.prevent="deleteRow(scope.$index, formTableData)"
+                @click.native.prevent="deleteRow1(scope.$index, formTableData)"
                 type="text"
                 size="small"
               >
@@ -91,7 +91,7 @@
               <el-table-column label="操作" width="120">
                 <template slot-scope="scope">
                   <el-button
-                    @click.native.prevent="deleteRow(scope.$index, tableData)"
+                    @click.native.prevent="deleteRow2(scope.$index, tableData)"
                     type="text"
                     size="small"
                   >
@@ -310,8 +310,7 @@ export default {
       reader.onload = e => {
         let data = e.target.result //=> return ArrayBuffer
         let wb = XLSX.read(data, { type: 'array' })
-        console.log('wb: ', wb)
-
+        // this.OriginExcel = JSON.parse(JSON.stringify(wb))
         wb.SheetNames.forEach((item, index) => {
           let jsonData = XLSX.utils.sheet_to_json(
             wb.Sheets[wb.SheetNames[index]]
@@ -395,8 +394,16 @@ export default {
         }
       })
     },
-    deleteRow(index, rows) {
-      rows.data.splice(index, 1)
+    deleteRow1(index, rows) {
+      console.log(rows)
+      rows.splice(index, 1)
+    },
+    deleteRow2(index, rows) {
+      if (rows.type == 'coodinate') {
+        rows.cooData.splice(index, 1)
+      } else {
+        rows.disData.splice(index, 1)
+      }
     },
     showForm() {
       this.tableDataCoo = []
