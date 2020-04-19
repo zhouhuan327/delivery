@@ -133,11 +133,11 @@ export default {
       isShowDisDialog: false,
       CooInfo: [],
       disInfo: {},
-      tempqt: []
+      tempqt: [],
     }
   },
   created() {
-    this.$axios('/getNodeList').then(res => {
+    this.$axios('/getNodeList').then((res) => {
       if (res.data.statu == 100) {
         this.list = res.data.data
         console.log(res)
@@ -176,13 +176,13 @@ export default {
         confirmButtonText: '确定',
         callback: () => {
           const item = {
-            id: scope.row.id
+            id: scope.row.id,
           }
-          this.$axios.post('/deleteNode', item).then(res => {
+          this.$axios.post('/deleteNode', item).then((res) => {
             if (res.data.statu == 100) {
               this.$message({
                 message: res.data.msg,
-                type: 'success'
+                type: 'success',
               })
             }
           })
@@ -194,7 +194,7 @@ export default {
           })
 
           row.splice(i, 1)
-        }
+        },
       })
     },
     exportExcel(scope) {
@@ -206,26 +206,26 @@ export default {
           A: '客户点',
           B: '横坐标',
           C: '纵坐标',
-          D: '需求量'
+          D: '需求量',
         })
-        data.forEach(item => {
+        data.forEach((item) => {
           table.push({
             A: item.name,
             B: item.x,
             C: item.y,
-            D: item.qt
+            D: item.qt,
           })
         })
         const wb = XLSX.utils.book_new()
         const ws = XLSX.utils.json_to_sheet(table, {
           header: ['A', 'B', 'C', 'D'],
-          skipHeader: true
+          skipHeader: true,
         })
         ws['!cols'] = [
           { width: 10 },
           { width: 10 },
           { width: 10 },
-          { width: 10 }
+          { width: 10 },
         ]
 
         //sheet写入book
@@ -288,8 +288,8 @@ export default {
         // const fileName = scope.row.sheetName + new Date().toDateString()
         // XLSX.writeFile(wb, fileName + '.xlsx')
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

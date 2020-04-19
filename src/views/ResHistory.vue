@@ -1,8 +1,46 @@
 <template>
   <div class="res-history">
-    <el-table :data="list" style="width: 100%;">
+    <el-table
+      :data="list"
+      :default-sort="{ prop: 'createTime', order: 'descending' }"
+      style="width: 100%;"
+    >
+      <el-table-column width="100" type="expand" label="计算参数">
+        <template class="info-temp" slot-scope="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="id">
+              <span>{{ props.row.resultData.parama.id }}</span>
+            </el-form-item>
+            <el-form-item label="客户数">
+              <span>{{ props.row.resultData.parama.n }}</span>
+            </el-form-item>
+            <el-form-item label="车数量">
+              <span>{{ props.row.resultData.parama.m }}</span>
+            </el-form-item>
+            <el-form-item label="大车载货量">
+              <span>{{ props.row.resultData.parama.q }}</span>
+            </el-form-item>
+            <el-form-item label="小车载货量">
+              <span>{{ props.row.resultData.parama.smallq }}</span>
+            </el-form-item>
+            <el-form-item label="最大里程数">
+              <span>{{ props.row.resultData.parama.maxroad }}</span>
+            </el-form-item>
+            <el-form-item label="种群规模">
+              <span>{{ props.row.resultData.parama.sizepop }}</span>
+            </el-form-item>
+            <el-form-item label="迭代次数">
+              <span>{{ props.row.resultData.parama.maxgen }}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
       <el-table-column label="地图" prop="sheetName"></el-table-column>
-      <el-table-column label="创建时间" prop="createTime"></el-table-column>
+      <el-table-column
+        label="创建时间"
+        sortable
+        prop="createTime"
+      ></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button
@@ -49,14 +87,18 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      list: null,
+      list: [],
       selectedNow: {},
     }
   },
   created() {
     this.$axios('/getHistoryList').then((res) => {
       if (res.data.statu == 100) {
-        this.list = res.data.data
+        const list = res.data.data
+        // list.forEach((item) => {
+        //   item.createTime = new Date(item.createTime)
+        // })
+        this.list = list
         console.log(this.list)
       } else {
         this.$message({
@@ -84,5 +126,17 @@ export default {
 
 <style lang="scss" scoped>
 .res-history {
+  .demo-table-expand {
+    font-size: 0;
+  }
+  .demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+  }
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 30%;
+  }
 }
 </style>

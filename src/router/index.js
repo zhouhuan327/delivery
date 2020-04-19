@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Layout from '../views/Layout/index.vue'
+import calcRoute from '../views/calcRoute/index.vue'
 Vue.use(VueRouter)
 
 export const RouterMap = [
@@ -14,14 +15,14 @@ export const RouterMap = [
       {
         path: '/home',
         name: 'home',
-        meta: { title: '首页', icon: 'iconfont icon-index' },
+        meta: { title: '团队信息', icon: 'iconfont icon-index' },
         component: () => import('@/views/TeamInfo.vue')
       }
     ]
   },
   {
     path: '/',
-    name: 'calcRoute',
+    name: 'calcRouteP',
     component: Layout,
     hidden: true,
     redirect: '/calcRoute',
@@ -30,13 +31,13 @@ export const RouterMap = [
         path: '/calcRoute',
         name: "calcRoute",
         meta: { title: '路线计算', icon: 'iconfont icon-route' },
-        component: () => import('@/views/calcRoute/index.vue')
+        component: calcRoute
       }
     ]
   },
   {
     path: '/',
-    name: 'resHistory',
+    name: 'resHistoryP',
     component: Layout,
     hidden: true,
     redirect: '/resHistory',
@@ -51,7 +52,7 @@ export const RouterMap = [
   },
   {
     path: '/',
-    name: 'upload',
+    name: 'uploadP',
     component: Layout,
     hidden: true,
     redirect: '/upload',
@@ -81,52 +82,52 @@ export const RouterMap = [
   },
 
 
-  {
-    path: '/testroute',
-    name: 'testroute',
-    component: Layout,
-    hidden: false,
-    meta: { title: '测试路由', icon: 'iconfont icon-peisong2' },
-    redirect: '/testroute1',
-    children: [
-      {
-        path: '/testroute1',
-        name: "testroute1",
-        meta: { title: '测试路由2', icon: 'iconfont icon-peisong3' },
-        component: () => import('@/views/404.vue')
-      },
-      // {
-      //   path: '/plan1',
-      //   name: "plan1",
-      //   meta: { title: 'plan1', icon: 'iconfont icon-zuobiao1' },
-      //   component: () => import('@/components/RouteGraph/index.vue')
-      // },
-      {
-        path: '/plan2',
-        name: "plan2",
-        meta: { title: 'plan2', icon: 'iconfont icon-zuobiao1' },
-        component: () => import('@/components/RouteGraph/index2.vue')
-      },
-      {
-        path: '/uploadtest',
-        name: "uploadtest",
-        meta: { title: '地图节点录入', icon: 'iconfont icon-Excel' },
-        component: () => import('@/views/File/uploadTest.vue')
-      }, {
-        path: '/nodelist',
-        name: "nodelist",
-        meta: { title: '地图管理', icon: 'iconfont icon-node1' },
-        component: () => import('@/views/NodeList/index.vue')
-      },
-      {
-        path: '/calcRoute',
-        name: "calcRoute",
-        meta: { title: '路线计算', icon: 'iconfont icon-route' },
-        component: () => import('@/views/calcRoute/index.vue')
-      }
-    ]
+  // {
+  //   path: '/testroute',
+  //   name: 'testroute',
+  //   component: Layout,
+  //   hidden: false,
+  //   meta: { title: '测试路由', icon: 'iconfont icon-peisong2' },
+  //   redirect: '/testroute1',
+  //   children: [
+  //     {
+  //       path: '/testroute1',
+  //       name: "testroute1",
+  //       meta: { title: '测试路由2', icon: 'iconfont icon-peisong3' },
+  //       component: () => import('@/views/404.vue')
+  //     },
+  //     // {
+  //     //   path: '/plan1',
+  //     //   name: "plan1",
+  //     //   meta: { title: 'plan1', icon: 'iconfont icon-zuobiao1' },
+  //     //   component: () => import('@/components/RouteGraph/index.vue')
+  //     // },
+  //     {
+  //       path: '/plan2',
+  //       name: "plan2",
+  //       meta: { title: 'plan2', icon: 'iconfont icon-zuobiao1' },
+  //       component: () => import('@/components/RouteGraph/index2.vue')
+  //     },
+  //     {
+  //       path: '/uploadtest',
+  //       name: "uploadtest",
+  //       meta: { title: '地图节点录入', icon: 'iconfont icon-Excel' },
+  //       component: () => import('@/views/File/uploadTest.vue')
+  //     }, {
+  //       path: '/nodelist',
+  //       name: "nodelist",
+  //       meta: { title: '地图管理', icon: 'iconfont icon-node1' },
+  //       component: () => import('@/views/NodeList/index.vue')
+  //     },
+  //     {
+  //       path: '/calcRoute',
+  //       name: "calcRoute",
+  //       meta: { title: '路线计算', icon: 'iconfont icon-route' },
+  //       component: () => import('@/views/calcRoute/index.vue')
+  //     }
+  //   ]
 
-  },
+  // },
   {
     path: '/404',
     name: '404',

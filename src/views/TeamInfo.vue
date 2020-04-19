@@ -1,6 +1,6 @@
 <template>
   <div class="teamInfo">
-    这里是团队信息
+    <h1>Specialized团队</h1>
   </div>
 </template>
 
@@ -15,5 +15,13 @@ export default {
 
 <style lang="scss" scoped>
 .teamInfo {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  h1 {
+    font-size: 25px;
+    font-weight: bold;
+  }
 }
 </style>
