@@ -1,0 +1,121 @@
+{
+  "id": "1659861",
+  "name": "delivery-route",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "7851236",
+      "name": "首页-选中",
+      "font_class": "index",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "7129150",
+      "name": "历史记录",
+      "font_class": "lishijilu",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    },
+    {
+      "icon_id": "3629236",
+      "name": "小车",
+      "font_class": "xiaoche",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    },
+    {
+      "icon_id": "9255427",
+      "name": "大车进出方便",
+      "font_class": "dache",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "7275004",
+      "name": "TEAM NETWORK",
+      "font_class": "TEAMNETWORK",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "2569174",
+      "name": "excel",
+      "font_class": "excel",
+      "unicode": "e64e",
+      "unicode_decimal": 58958
+    },
+    {
+      "icon_id": "3527435",
+      "name": "node",
+      "font_class": "node",
+      "unicode": "e626",
+      "unicode_decimal": 58918
+    },
+    {
+      "icon_id": "10553562",
+      "name": "node",
+      "font_class": "node1",
+      "unicode": "e647",
+      "unicode_decimal": 58951
+    },
+    {
+      "icon_id": "13455501",
+      "name": "Excel",
+      "font_class": "Excel",
+      "unicode": "e69c",
+      "unicode_decimal": 59036
+    },
+    {
+      "icon_id": "1282702",
+      "name": "route",
+      "font_class": "route",
+      "unicode": "e609",
+      "unicode_decimal": 58889
+    },
+    {
+      "icon_id": "1601506",
+      "name": "坐标",
+      "font_class": "zuobiao1",
+      "unicode": "e61e",
+      "unicode_decimal": 58910
+    },
+    {
+      "icon_id": "5543817",
+      "name": "侧边栏",
+      "font_class": "cebianlan",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "7620624",
+      "name": "配送 (1)",
+      "font_class": "peisong1",
+      "unicode": "e646",
+      "unicode_decimal": 58950
+    },
+    {
+      "icon_id": "9165177",
+      "name": "配送",
+      "font_class": "peisong2",
+      "unicode": "e6f0",
+      "unicode_decimal": 59120
+    },
+    {
+      "icon_id": "12976291",
+      "name": "配送",
+      "font_class": "peisong3",
+      "unicode": "e614",
+      "unicode_decimal": 58900
+    },
+    {
+      "icon_id": "13061868",
+      "name": "历史记录",
+      "font_class": "historyrecord",
+      "unicode": "e622",
+      "unicode_decimal": 58914
+    }
+  ]
+}

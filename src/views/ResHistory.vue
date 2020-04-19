@@ -44,24 +44,24 @@ import { exportResultExcel } from '@/utils/ExcelTool'
 export default {
   name: 'res-history',
   components: {
-    Graph
+    Graph,
   },
   data() {
     return {
       dialogVisible: false,
       list: null,
-      selectedNow: {}
+      selectedNow: {},
     }
   },
   created() {
-    this.$axios('getHistoryList').then(res => {
+    this.$axios('/getHistoryList').then((res) => {
       if (res.data.statu == 100) {
         this.list = res.data.data
         console.log(this.list)
       } else {
         this.$message({
           message: res.data.msg,
-          type: 'error'
+          type: 'error',
         })
       }
     })
@@ -77,8 +77,8 @@ export default {
       let calcResult = scope.row.resultData.calcResult
       let parama = scope.row.resultData.parama
       exportResultExcel(calcResult, parama)
-    }
-  }
+    },
+  },
 }
 </script>
 
