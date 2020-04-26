@@ -14,9 +14,6 @@
             <el-form-item label="客户数">
               <span>{{ props.row.resultData.parama.n }}</span>
             </el-form-item>
-            <el-form-item label="车数量">
-              <span>{{ props.row.resultData.parama.m }}</span>
-            </el-form-item>
             <el-form-item label="大车载货量">
               <span>{{ props.row.resultData.parama.q }}</span>
             </el-form-item>
@@ -25,12 +22,6 @@
             </el-form-item>
             <el-form-item label="最大里程数">
               <span>{{ props.row.resultData.parama.maxroad }}</span>
-            </el-form-item>
-            <el-form-item label="种群规模">
-              <span>{{ props.row.resultData.parama.sizepop }}</span>
-            </el-form-item>
-            <el-form-item label="迭代次数">
-              <span>{{ props.row.resultData.parama.maxgen }}</span>
             </el-form-item>
           </el-form>
         </template>

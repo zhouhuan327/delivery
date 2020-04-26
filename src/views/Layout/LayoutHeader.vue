@@ -4,10 +4,10 @@
       <el-col :xs="12" :sm="12" :md="14" :lg="16" :xl="18">
         <div class="system-info">
           <img class="logo" src="@/assets/logo.png" alt />
-          <span class="title">配送路线优化</span>
+          <span class="title">配送路线优化系统</span>
         </div>
       </el-col>
-      <el-col :xs="12" :sm="12" :md="10" :lg="8" :xl="6">
+      <el-col v-show="false" :xs="12" :sm="12" :md="10" :lg="8" :xl="6">
         <el-dropdown class="system-user">
           <span class="userinfo-inner">
             <!-- <i class="iconfont icon-TEAMNETWORK"></i> -->

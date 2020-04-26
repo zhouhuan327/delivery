@@ -19,19 +19,35 @@
           :inline="true"
         >
           <el-form-item label="客户点" prop="name">
-            <el-input v-model="formData.name" disabled></el-input>
+            <el-input
+              style="width:130px"
+              v-model="formData.name"
+              disabled
+            ></el-input>
           </el-form-item>
 
           <el-form-item label="需求量" prop="qt">
-            <el-input v-model="formData.qt" placeholder="q(t)"></el-input>
+            <el-input
+              style="width:130px"
+              v-model="formData.qt"
+              placeholder="q(t)"
+            ></el-input>
           </el-form-item>
 
           <el-form-item label="横坐标" prop="x">
-            <el-input v-model="formData.x" placeholder="横坐标x(km)"></el-input>
+            <el-input
+              style="width:130px"
+              v-model="formData.x"
+              placeholder="横坐标x(km)"
+            ></el-input>
           </el-form-item>
 
           <el-form-item label="纵坐标" prop="y">
-            <el-input v-model="formData.y" placeholder="纵坐标y(km)"></el-input>
+            <el-input
+              style="width:130px"
+              v-model="formData.y"
+              placeholder="纵坐标y(km)"
+            ></el-input>
           </el-form-item>
 
           <el-button @click="insertData" type="primary" plain>插入</el-button>
@@ -236,59 +252,59 @@ export default {
         name: 0,
         x: null,
         y: null,
-        qt: null
+        qt: null,
       },
       rules: {
         name: [
           {
             required: true,
             message: '请输入客户点的名称',
-            trigger: 'blur'
-          }
+            trigger: 'blur',
+          },
         ],
         qt: [
           {
             required: true,
             message: '请输入需求量',
-            trigger: 'blur'
+            trigger: 'blur',
           },
           {
             pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
             message: '请输入合法的数字，最多两位小数',
-            trigger: 'change'
-          }
+            trigger: 'change',
+          },
         ],
         x: [
           {
             required: true,
             message: '请输入横坐标x',
-            trigger: 'blur'
+            trigger: 'blur',
           },
           {
             pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
             message: '请输入合法的数字，最多两位小数',
-            trigger: 'change'
-          }
+            trigger: 'change',
+          },
         ],
         y: [
           {
             required: true,
             message: '请输入纵坐标y',
-            trigger: 'blur'
+            trigger: 'blur',
           },
           {
             pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
             message: '请输入合法的数字，最多两位小数',
-            trigger: 'change'
-          }
-        ]
+            trigger: 'change',
+          },
+        ],
       },
       formTableData: [],
       isShowForm: true, //手动输入的表格
       isShowSubmit: false,
       dataName: {
-        name: ''
-      }
+        name: '',
+      },
     }
   },
   created() {
@@ -307,7 +323,7 @@ export default {
       const sheets = []
       let files = ev.target.files[0]
       let reader = new FileReader()
-      reader.onload = e => {
+      reader.onload = (e) => {
         let data = e.target.result //=> return ArrayBuffer
         let wb = XLSX.read(data, { type: 'array' })
         // this.OriginExcel = JSON.parse(JSON.stringify(wb))
@@ -318,17 +334,17 @@ export default {
           sheets.push({
             SheetName: item,
             data: jsonData,
-            type: 'coodinate'
+            type: 'coodinate',
           })
         })
         this.isShowForm = false
-        this.tableDataCoo = sheets.map(item => {
+        this.tableDataCoo = sheets.map((item) => {
           return {
             sheetName: item.SheetName,
             cooData: this.formatterSheets(item.data),
             disData: [],
             qtdata: [],
-            type: item.type
+            type: item.type,
           }
         })
         console.log('coo final', this.tableDataCoo)
@@ -348,7 +364,7 @@ export default {
       const sheets = []
       let files = ev.target.files[0]
       let reader = new FileReader()
-      reader.onload = e => {
+      reader.onload = (e) => {
         let data = e.target.result //=> return ArrayBuffer
         let wb = XLSX.read(data, { type: 'array' })
         this.OriginExcel = JSON.parse(JSON.stringify(wb))
@@ -359,7 +375,7 @@ export default {
           )
           let distanceData = []
           let qtdata = []
-          jsonData.some(item => {
+          jsonData.some((item) => {
             if (item.name == '需求量') {
               return true
             }
@@ -373,7 +389,7 @@ export default {
             disData: distanceData,
             cooData: [],
             qtdata: qtdata,
-            type: 'distance'
+            type: 'distance',
           })
         })
         this.tableDataDis = sheets
@@ -385,12 +401,12 @@ export default {
       this.isShowDialog = false
     },
     formatterSheets(data) {
-      return data.map(item => {
+      return data.map((item) => {
         return {
           name: item['客户点'],
           x: item['横坐标'],
           y: item['纵坐标'],
-          qt: item['需求量']
+          qt: item['需求量'],
         }
       })
     },
@@ -413,11 +429,11 @@ export default {
       this.isShowForm = true
     },
     insertData() {
-      this.$refs['coo-form'].validate(valid => {
+      this.$refs['coo-form'].validate((valid) => {
         if (valid) {
           //判断name是否重复
           let isRepeat = false
-          this.formTableData.forEach(item => {
+          this.formTableData.forEach((item) => {
             if (item.name == this.formData.name) {
               isRepeat = true
               this.$message.error(`客户点${this.formData.name}已存在`)
@@ -439,7 +455,7 @@ export default {
         } else {
           this.$message({
             message: '该项选都为必填项',
-            type: 'warning'
+            type: 'warning',
           })
           return false
         }
@@ -454,7 +470,7 @@ export default {
       if (this.formTableData.length == 0 || this.dataName.name == '') {
         this.$message({
           message: '数据或数据名不能为空',
-          type: 'warning'
+          type: 'warning',
         })
       } else {
         let obj = {
@@ -462,15 +478,15 @@ export default {
           type: 'coodinate',
           disData: [],
           cooData: this.formTableData,
-          qtdata: []
+          qtdata: [],
         }
         let arr = []
         arr.push(obj)
-        this.$axios.post('/addNode', arr).then(res => {
+        this.$axios.post('/addNode', arr).then((res) => {
           if (res.data.statu == 100) {
             this.$message({
               message: res.data.msg,
-              type: 'success'
+              type: 'success',
             })
             this.isShowSubmit = false
             this.dataName.name = null
@@ -480,7 +496,7 @@ export default {
           } else {
             this.$message({
               message: res.data.msg,
-              type: 'error'
+              type: 'error',
             })
           }
         })
@@ -488,49 +504,49 @@ export default {
     },
     submitCoo() {
       const data = JSON.parse(JSON.stringify(this.tableDataCoo))
-      this.$axios.post('/addNode', data).then(res => {
+      this.$axios.post('/addNode', data).then((res) => {
         console.log(res.data)
         if (res.data.statu == 100) {
           this.$message({
             message: '保存成功',
-            type: 'success'
+            type: 'success',
           })
         } else {
           this.$message({
             message: '保存失败' + res.data.msg,
-            type: 'error'
+            type: 'error',
           })
         }
       })
     },
     submitDis() {
       const data = JSON.parse(JSON.stringify(this.tableDataDis))
-      data.forEach(item => {
+      data.forEach((item) => {
         let distanceArray = []
         let qtArray = []
-        item.disData.forEach(distance => {
+        item.disData.forEach((distance) => {
           let temp = Object.values(distance)
           temp.pop()
           distanceArray.push(temp)
         })
-        item.qtdata.forEach(qt => {
+        item.qtdata.forEach((qt) => {
           qtArray = Object.values(qt)
         })
         item.disData = distanceArray
         item.qtdata = qtArray
         item.wb = this.OriginExcel
       })
-      this.$axios.post('/addNode', data).then(res => {
+      this.$axios.post('/addNode', data).then((res) => {
         console.log(res.data)
         if (res.data.statu == 100) {
           this.$message({
             message: '保存成功',
-            type: 'success'
+            type: 'success',
           })
         } else {
           this.$message({
             message: '保存失败' + res.data.msg,
-            type: 'error'
+            type: 'error',
           })
         }
       })
@@ -539,10 +555,10 @@ export default {
       let template = []
       let wb
       let filename
-      this.$axios('/getTemp').then(res => {
+      this.$axios('/getTemp').then((res) => {
         if (res.data.statu == 100) {
           template = res.data.data
-          template.forEach(item => {
+          template.forEach((item) => {
             if (item.type == type) {
               wb = item.data
             }
@@ -556,12 +572,12 @@ export default {
         } else {
           this.$message({
             message: res.data.msg,
-            type: 'error'
+            type: 'error',
           })
         }
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

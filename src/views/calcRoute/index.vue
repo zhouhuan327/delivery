@@ -54,20 +54,28 @@
       </el-row>
       <p class="divide-line">车辆配置</p>
       <el-row>
-        <el-form-item label="车数量" prop="m">
+        <!-- <el-form-item label="车数量" prop="m">
           <el-input v-model.number="parama.m" style="width:150px"></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="大车载货量" prop="q">
           <el-input v-model="parama.q" style="width:150px"></el-input>
         </el-form-item>
         <el-form-item label="小车载货量" prop="smallq">
           <el-input v-model="parama.smallq" style="width:150px"></el-input>
         </el-form-item>
-        <el-form-item label="最大里程数" prop="maxroad">
+        <el-form-item label="里程上限" prop="maxroad">
           <el-input v-model="parama.maxroad" style="width:150px"></el-input>
         </el-form-item>
       </el-row>
       <el-row>
+        <el-form-item label="时间窗">
+          <el-input style="width:150px"></el-input>
+        </el-form-item>
+        <el-form-item label="排气量">
+          <el-input style="width:150px"></el-input>
+        </el-form-item>
+      </el-row>
+      <!-- <el-row>
         <p class="divide-line">参数配置</p>
         <el-form-item label="种群规模" prop="sizepop">
           <el-input v-model.number="parama.sizepop"></el-input>
@@ -75,16 +83,16 @@
         <el-form-item label="迭代次数" prop="maxgen">
           <el-input v-model.number="parama.maxgen"></el-input>
         </el-form-item>
-      </el-row>
-      <el-row>
+      </el-row> -->
+      <!-- <el-row>
         <el-form-item label="模型">
           <el-radio-group v-model="parama.model">
             <el-radio label="局部最优解"></el-radio>
             <el-radio label="全局最优解"></el-radio>
           </el-radio-group>
         </el-form-item>
-      </el-row>
-      <el-row>
+      </el-row> -->
+      <!-- <el-row>
         <el-form-item label="考虑配送时间">
           <el-switch v-model="parama.isTime"></el-switch>
         </el-form-item>
@@ -101,29 +109,45 @@
             </el-form-item>
           </div>
         </transition>
-      </el-row>
+      </el-row> -->
     </el-form>
-    <el-button size="small" @click="setDefault" round>生成随机参数</el-button>
-    <el-button
-      size="medium"
-      type="primary"
-      icon="el-icon-edit"
-      :loading="isLoading"
-      plain
-      @click="startCalc"
-      >开始计算</el-button
-    >
-    <transition name="fade-transform">
+    <el-row class="mb20">
+      <el-button size="small" @click="setDefault" round>生成参数</el-button>
+    </el-row>
+    <el-row class="mb40">
       <el-button
-        v-show="isShowDetailBtn"
         size="medium"
-        type="info"
-        icon="el-icon-tickets"
+        type="primary"
+        icon="el-icon-edit"
+        :loading="isLoading"
         plain
-        @click="showGraphDialog"
-        >查看结果</el-button
+        @click="startCalc"
+        >开始计算</el-button
       >
-    </transition>
+      <transition name="fade-transform">
+        <el-button
+          v-show="isShowDetailBtn"
+          size="medium"
+          type="info"
+          icon="el-icon-tickets"
+          plain
+          @click="showGraphDialog"
+          >查看结果</el-button
+        >
+      </transition>
+    </el-row>
+    <el-row>
+      <el-col :span="17">
+        <el-progress
+          v-show="isStartCalc"
+          :text-inside="true"
+          :stroke-width="15"
+          :percentage="calcPercentage"
+          :format="progressDone"
+        ></el-progress>
+      </el-col>
+    </el-row>
+
     <el-dialog :visible.sync="dialogVisible" width="70%">
       <div class="dialog-header" slot="title">
         <el-tooltip
@@ -159,7 +183,7 @@ import { exportResultExcel } from '@/utils/ExcelTool'
 export default {
   name: 'calcRoute',
   components: {
-    Graph
+    Graph,
   },
   data() {
     const zeroCheck = (rule, value, callback) => {
@@ -171,80 +195,79 @@ export default {
     }
     return {
       isLoadingExport: false,
+      isStartCalc: false,
       isShowDetailBtn: false,
       dialogVisible: false,
       parama: {
         id: null, // 节点ID
         n: 0, //客户数，
-        m: null, //车数量
         q: null, //大车载货量
+        smallq: 6,
         maxroad: null, //最大里程数
-        sizepop: null, //种群规模
-        maxgen: null, //迭代次数
         isTime: false,
         model: '',
-        smallq: 6
       },
       rules: {
         id: [{ required: true, message: '请选择地图数据', trigger: 'change' }],
-        m: [
-          { required: true, message: '请输入车数量', trigger: 'change' },
-          {
-            pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
-            message: '请输入合法的数字',
-            trigger: 'change'
-          },
-          { validator: zeroCheck, trigger: 'change' }
-        ],
+        // m: [
+        //   { required: true, message: '请输入车数量', trigger: 'change' },
+        //   {
+        //     pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
+        //     message: '请输入合法的数字',
+        //     trigger: 'change',
+        //   },
+        //   { validator: zeroCheck, trigger: 'change' },
+        // ],
         q: [
           { required: true, message: '请输入大车载货量', trigger: 'change' },
           {
             pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
             message: '请输入合法的数字，最多两位小数',
-            trigger: 'change'
+            trigger: 'change',
           },
-          { validator: zeroCheck, trigger: 'change' }
+          { validator: zeroCheck, trigger: 'change' },
         ],
         smallq: [
           { required: true, message: '请输入小车载货量', trigger: 'change' },
           {
             pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
             message: '请输入合法的数字，最多两位小数',
-            trigger: 'change'
+            trigger: 'change',
           },
-          { validator: zeroCheck, trigger: 'change' }
+          { validator: zeroCheck, trigger: 'change' },
         ],
         maxroad: [
           { required: true, message: '请输最大里程数', trigger: 'change' },
           {
             pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
             message: '请输入合法的数字，最多两位小数',
-            trigger: 'change'
+            trigger: 'change',
           },
-          { validator: zeroCheck, trigger: 'change' }
+          { validator: zeroCheck, trigger: 'change' },
         ],
-        sizepop: [
-          { required: true, message: '请输种群规模', trigger: 'change' },
-          { validator: zeroCheck, trigger: 'change' }
-        ],
-        maxgen: [
-          { required: true, message: '请输迭代次数', trigger: 'change' },
-          { validator: zeroCheck, trigger: 'change' }
-        ]
+        // sizepop: [
+        //   { required: true, message: '请输种群规模', trigger: 'change' },
+        //   { validator: zeroCheck, trigger: 'change' },
+        // ],
+        // maxgen: [
+        //   { required: true, message: '请输迭代次数', trigger: 'change' },
+        //   { validator: zeroCheck, trigger: 'change' },
+        // ],
       },
       optionList: [],
       isLoading: false,
       calcResult: {}, //处理后的计算结果
-      graphData: {}
+      graphData: {},
+      calcPercentage: 1,
     }
   },
   created() {
-    this.$axios('/getNodeList').then(res => {
+    this.$axios('/getNodeList').then((res) => {
       if (res.data.statu == 100) {
         const list = res.data.data
         console.log('getList', list)
         const optionList = []
-        list.forEach(item => {
+        list.forEach((item) => {
           let count =
             item.cooData.length == 0 ? item.disData.length : item.cooData.length
           let data = item.cooData.length == 0 ? item.disData : item.cooData
@@ -253,36 +276,74 @@ export default {
             name: item.sheetName,
             type: item.type,
             count: count,
-            data: data
+            data: data,
           })
         })
         this.optionList = optionList
       }
     })
+
+    //进度条测试
   },
   watch: {
     parama: {
       deep: true,
       handler() {
         this.isShowDetailBtn = false
-      }
-    }
+      },
+    },
   },
   methods: {
     startCalc() {
       console.log('传入的', this.parama)
-      this.$refs['form'].validate(valid => {
+      this.$refs['form'].validate((valid) => {
         if (valid && this.carCheck()) {
           this.isLoading = true
           this.isShowDetailBtn = false
+          //进度条部分
+          const m = 20
+          this.calcPercentage = 0
+          this.isStartCalc = true
+          let time = (m * m) / 20
+          let interval
+          const after90 = () => {
+            this.calcPercentage += 1
+            if (this.calcPercentage >= 97) {
+              clearInterval(interval)
+            }
+          }
+          const after70 = () => {
+            this.calcPercentage += 1
+            if (this.calcPercentage > 75) {
+              clearInterval(interval)
+              interval = setInterval(after90, 800)
+            }
+          }
+          const after50 = () => {
+            this.calcPercentage += 1
+            if (this.calcPercentage > 75) {
+              clearInterval(interval)
+              interval = setInterval(after70, 600)
+            }
+          }
+          interval = setInterval(() => {
+            this.calcPercentage += 1
+            if (this.calcPercentage > 50) {
+              clearInterval(interval)
+              interval = setInterval(after50, 400)
+            }
+          }, 200)
+          //开始计算
           this.$axios
             .post('/calc', this.parama)
-            .then(res => {
+            .then((res) => {
               if (res.data.statu == 100) {
                 this.$message({
                   message: res.data.msg,
-                  type: 'success'
+                  type: 'success',
                 })
+                clearInterval(interval)
+                this.calcPercentage = 100
                 this.isLoading = false
                 console.log('计算结果', res.data)
                 this.setGraphData(res.data.data) //处理路径
@@ -290,12 +351,12 @@ export default {
               } else {
                 this.$message({
                   message: res.data.msg,
-                  type: 'error'
+                  type: 'error',
                 })
                 this.isLoading = false
               }
             })
-            .catch(error => {
+            .catch((error) => {
               this.isLoading = false
               console.log(error)
             })
@@ -314,7 +375,7 @@ export default {
         exInfo.push({
           name: `车${index + 1}`,
           distance: item.toFixed(3),
-          weight: tempwei[index].toFixed(3)
+          weight: tempwei[index].toFixed(3),
         })
       })
       this.graphData.exInfo = exInfo
@@ -345,7 +406,7 @@ export default {
           name: `车${index + 1}`,
           value: item,
           index: index,
-          carType: carType
+          carType: carType,
         })
       })
       this.graphData.link = link
@@ -354,7 +415,7 @@ export default {
       console.log(' this.graphData', this.graphData)
     },
     setCount(id) {
-      this.optionList.forEach(item => {
+      this.optionList.forEach((item) => {
         if (item.id == id) {
           this.parama.n = item.count - 1
           this.graphData.data = item.data
@@ -366,14 +427,9 @@ export default {
       this.dialogVisible = true
     },
     setDefault() {
-      let kehushu = this.parama.n
-      this.parama.m =
-        kehushu == 0 ? 5 : this.getRamdon(kehushu / 2 - 2, kehushu / 2 + 3)
-      this.parama.q = this.getRamdon(5, 20)
+      this.parama.q = 8
       this.parama.smallq = this.parama.q / 2
       this.parama.maxroad = this.getRamdon(40, 70)
-      this.parama.sizepop = this.getRamdon(30, 200)
-      this.parama.maxgen = this.getRamdon(30, 200)
     },
     getRamdon(start, end, fixed = 0) {
       let differ = end - start
@@ -386,7 +442,7 @@ export default {
       result.parama = this.parama
       result.graphData = this.graphData
       let sheetName = ''
-      this.optionList.forEach(item => {
+      this.optionList.forEach((item) => {
         if (item.id == result.parama.id) {
           sheetName = item.name
         }
@@ -394,19 +450,19 @@ export default {
       let postData = {
         resultData: result,
         createTime: '',
-        sheetName: sheetName
+        sheetName: sheetName,
       }
       console.log(postData)
-      this.$axios.post('/addHistory', postData).then(res => {
+      this.$axios.post('/addHistory', postData).then((res) => {
         if (res.data.statu == 100) {
           this.$message({
             message: res.data.msg,
-            type: 'success'
+            type: 'success',
           })
         } else {
           this.$message({
             message: res.data.msg,
-            type: 'error'
+            type: 'error',
           })
         }
       })
@@ -424,13 +480,16 @@ export default {
       if (kehushu != 0 && carnum > kehushu) {
         this.$message({
           type: 'error',
-          message: '车数量不能大于客户数'
+          message: '车数量不能大于客户数',
         })
         return false
       }
       return true
-    }
-  }
+    },
+    progressDone(per) {
+      return per === 100 ? '计算完成' : `${per}%`
+    },
+  },
 }
 </script>
 

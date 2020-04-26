@@ -9,7 +9,7 @@
       </el-table-column>
       <el-table-column prop="sheetName" label="数据名" width="180">
       </el-table-column>
-      <el-table-column prop="type" label="类型" width="180">
+      <el-table-column prop="type" label="类型" width="140">
         <template slot-scope="scope">
           <el-tag
             :type="scope.row.type === 'coodinate' ? 'primary' : 'success'"
@@ -18,7 +18,7 @@
           >
         </template>
       </el-table-column>
-      <el-table-column label="节点数量" width="180" :formatter="formatterCount">
+      <el-table-column label="节点数量" width="140" :formatter="formatterCount">
       </el-table-column>
       <el-table-column prop="createTime" label="创建时间"> </el-table-column>
       <el-table-column label="" width="180">

@@ -40,28 +40,22 @@ const exportResultExcel = (calcResult, parama) => {
             }
             let paramaTable = []
             paramaTable.push({
-                A: '车数量',
-                B: '客户数',
-                C: '大车载货量',
-                D: '小车载货量',
-                E: '最大里程数',
-                F: '种群规模',
-                G: '迭代次数'
+                A: '客户数',
+                B: '大车载货量',
+                C: '小车载货量',
+                D: '最大里程数',
             })
             paramaTable.push({
-                A: parama.m,
-                B: parama.n,
-                C: parama.q,
-                D: parama.smallq,
-                E: parama.maxroad,
-                F: parama.sizepop,
-                G: parama.maxgen
+                A: parama.n,
+                B: parama.q,
+                C: parama.smallq,
+                D: parama.maxroad,
             })
             const paramaWs = XLSX.utils.json_to_sheet(paramaTable, {
-                header: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+                header: ['A', 'B', 'C', 'D'],
                 skipHeader: true
             })
-            paramaWs['!cols'] = [{ width: 15 }, { width: 15 }, { width: 15 }, { width: 15 }, { width: 15 }, { width: 15 }, { width: 15 }]
+            paramaWs['!cols'] = [{ width: 15 }, { width: 15 }, { width: 15 }, { width: 15 }]
             XLSX.utils.book_append_sheet(mapWb, paramaWs, '参数')
 
             let calcResTable = []
