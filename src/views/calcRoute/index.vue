@@ -64,10 +64,14 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="里程上限" prop="maxroad">
-          <el-input v-model="parama.maxroad" style="width:150px"></el-input>
+          <el-input v-model="parama.maxroad" style="width:150px">
+            <i slot="suffix" style="font-style:normal" class="danwei">km</i>
+          </el-input>
         </el-form-item>
         <el-form-item label="最高车速">
-          <el-input v-model="parama.speed" style="width:150px"></el-input>
+          <el-input v-model="parama.speed" style="width:150px">
+            <i slot="suffix" style="font-style:normal" class="danwei">km/h</i>
+          </el-input>
         </el-form-item>
 
         <!-- <el-form-item label="大车载货量" prop="q">
@@ -103,16 +107,16 @@
                 { validator: zeroCheck, trigger: 'change' },
               ]"
             >
-              <el-input
-                v-model="carInfo.carring"
-                style="width:150px"
-              ></el-input>
+              <el-input v-model="carInfo.carring" style="width:150px">
+                <i slot="suffix" style="font-style:normal" class="danwei">T</i>
+              </el-input>
             </el-form-item>
             <el-form-item label="排量">
-              <el-input
-                v-model="carInfo.pailiang"
-                style="width:150px"
-              ></el-input>
+              <el-input v-model="carInfo.pailiang" style="width:150px">
+                <i slot="suffix" style="font-style:normal" class="danwei"
+                  >L/km</i
+                >
+              </el-input>
             </el-form-item>
           </el-row>
         </div>
@@ -431,6 +435,7 @@ export default {
       this.calcResult.route = res
       this.calcResult.distance = data.distance
       this.calcResult.weight = data.weight
+      this.calcResult.carType = data.weightType
 
       let link = []
       res.forEach((item, index) => {

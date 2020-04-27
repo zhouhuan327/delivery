@@ -14,14 +14,14 @@
             <el-form-item label="客户数">
               <span>{{ props.row.resultData.parama.n }}</span>
             </el-form-item>
-            <el-form-item label="大车载货量">
-              <span>{{ props.row.resultData.parama.q }}</span>
-            </el-form-item>
-            <el-form-item label="小车载货量">
-              <span>{{ props.row.resultData.parama.smallq }}</span>
-            </el-form-item>
-            <el-form-item label="最大里程数">
+            <el-form-item label="里程数">
               <span>{{ props.row.resultData.parama.maxroad }}</span>
+            </el-form-item>
+            <el-form-item label="车种类">
+              <span>{{ props.row.resultData.parama.carTypes }}</span>
+            </el-form-item>
+            <el-form-item label="最高车速">
+              <span>{{ props.row.resultData.parama.speed }}</span>
             </el-form-item>
           </el-form>
         </template>
@@ -53,12 +53,6 @@
       </el-table-column>
     </el-table>
     <el-dialog :visible.sync="dialogVisible" width="70%">
-      <div slot="title">
-        <span><i class="iconfont icon-xiaoche"></i>小车</span>
-        <span style="margin-left:10px"
-          ><i class="iconfont icon-dache"></i>大车</span
-        >
-      </div>
       <Graph :gData="selectedNow"></Graph>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">关闭</el-button>

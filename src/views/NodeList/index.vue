@@ -59,6 +59,7 @@
         <el-table-column prop="x" label="横坐标x(km)"> </el-table-column>
         <el-table-column prop="y" label="纵坐标y(km)"> </el-table-column>
         <el-table-column prop="qt" label="需求量q(t)"> </el-table-column>
+        <el-table-column prop="timeWindow" label="时间窗(h)"> </el-table-column>
         <!-- <el-table-column label="操作" width="120">
           <template slot-scope="scope">
             <el-button

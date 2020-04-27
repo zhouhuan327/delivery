@@ -42,7 +42,7 @@
       <el-col :span="8">
         <template v-for="item in exInfo">
           <el-card :key="item.name" class="box-card">
-            <p>{{ item.name }}(载重{{ item.carType }}型)</p>
+            <p>{{ item.name }}(载重{{ item.carType }}t型)</p>
             <p>行驶路程:{{ item.distance }}</p>
             <p>载货量:{{ item.weight }}</p>
             <p>路线:{{ item.route }}</p>

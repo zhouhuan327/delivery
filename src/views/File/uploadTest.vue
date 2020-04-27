@@ -17,6 +17,7 @@
           label-width="80px"
           :rules="rules"
           :inline="true"
+          class="mb10"
         >
           <el-form-item label="客户点" prop="name">
             <el-input
@@ -27,27 +28,22 @@
           </el-form-item>
 
           <el-form-item label="需求量" prop="qt">
-            <el-input
-              style="width:130px"
-              v-model="formData.qt"
-              placeholder="q(t)"
-            ></el-input>
+            <el-input style="width:120px" v-model="formData.qt">
+              <i slot="suffix" style="font-style:normal" class="danwei">T</i>
+            </el-input>
           </el-form-item>
 
           <el-form-item label="横坐标" prop="x">
-            <el-input
-              style="width:130px"
-              v-model="formData.x"
-              placeholder="横坐标x(km)"
-            ></el-input>
+            <el-input style="width:120px" v-model="formData.x"> </el-input>
           </el-form-item>
 
           <el-form-item label="纵坐标" prop="y">
-            <el-input
-              style="width:130px"
-              v-model="formData.y"
-              placeholder="纵坐标y(km)"
-            ></el-input>
+            <el-input style="width:120px" v-model="formData.y"> </el-input>
+          </el-form-item>
+          <el-form-item label="时间窗">
+            <el-input style="width:120px" v-model="formData.timeWindow">
+              <i slot="suffix" style="font-style:normal" class="danwei">h</i>
+            </el-input>
           </el-form-item>
 
           <el-button @click="insertData" type="primary" plain>插入</el-button>
@@ -62,6 +58,8 @@
           <el-table-column prop="x" label="横坐标x(km)"> </el-table-column>
           <el-table-column prop="y" label="纵坐标y(km)"> </el-table-column>
           <el-table-column prop="qt" label="需求量q(t)"> </el-table-column>
+          <el-table-column prop="timeWindow" label="时间窗(h)">
+          </el-table-column>
           <el-table-column label="操作" width="120">
             <template slot-scope="scope">
               <el-button
@@ -221,9 +219,9 @@
         > -->
       </span>
     </el-dialog>
-    <el-dialog title="取个名字" :visible.sync="isShowSubmit" width="30%">
+    <el-dialog title="请填写地图名称" :visible.sync="isShowSubmit" width="30%">
       <el-form :model="dataName" :inline="true">
-        <el-form-item label="数据名" prop="name">
+        <el-form-item label="地图名称" prop="name">
           <el-input v-model="dataName.name"></el-input>
         </el-form-item>
       </el-form>
@@ -253,6 +251,7 @@ export default {
         x: null,
         y: null,
         qt: null,
+        timeWindow: null,
       },
       rules: {
         name: [
