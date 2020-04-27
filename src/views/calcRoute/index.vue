@@ -54,10 +54,23 @@
       </el-row>
       <p class="divide-line">车辆配置</p>
       <el-row>
-        <!-- <el-form-item label="车数量" prop="m">
-          <el-input v-model.number="parama.m" style="width:150px"></el-input>
-        </el-form-item> -->
-        <el-form-item label="大车载货量" prop="q">
+        <el-form-item label="车辆种类" prop="carTypes">
+          <el-input
+            v-model.number="parama.carTypes"
+            style="width:100px"
+            @change="typeChange"
+            :min="1"
+            type="number"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="里程上限" prop="maxroad">
+          <el-input v-model="parama.maxroad" style="width:150px"></el-input>
+        </el-form-item>
+        <el-form-item label="最高车速">
+          <el-input v-model="parama.speed" style="width:150px"></el-input>
+        </el-form-item>
+
+        <!-- <el-form-item label="大车载货量" prop="q">
           <el-input v-model="parama.q" style="width:150px"></el-input>
         </el-form-item>
         <el-form-item label="小车载货量" prop="smallq">
@@ -65,16 +78,46 @@
         </el-form-item>
         <el-form-item label="里程上限" prop="maxroad">
           <el-input v-model="parama.maxroad" style="width:150px"></el-input>
-        </el-form-item>
+        </el-form-item> -->
       </el-row>
-      <el-row>
-        <el-form-item label="时间窗">
-          <el-input style="width:150px"></el-input>
-        </el-form-item>
-        <el-form-item label="排气量">
-          <el-input style="width:150px"></el-input>
-        </el-form-item>
-      </el-row>
+      <transition-group name="fade-transform">
+        <div v-for="(carInfo, index) in parama.dynamic" :key="index">
+          <el-row class="car-type">
+            <el-form-item :label="'种类' + Number(index + 1)">
+              <el-input style="width:100px;visibility:hidden"></el-input>
+            </el-form-item>
+            <el-form-item
+              label="载货量"
+              :prop="'dynamic.' + index + '.carring'"
+              :rules="[
+                {
+                  required: true,
+                  message: '请输入载货量',
+                  trigger: 'change',
+                },
+                {
+                  pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
+                  message: '请输入合法的数字，最多两位小数',
+                  trigger: 'change',
+                },
+                { validator: zeroCheck, trigger: 'change' },
+              ]"
+            >
+              <el-input
+                v-model="carInfo.carring"
+                style="width:150px"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="排量">
+              <el-input
+                v-model="carInfo.pailiang"
+                style="width:150px"
+              ></el-input>
+            </el-form-item>
+          </el-row>
+        </div>
+      </transition-group>
+
       <!-- <el-row>
         <p class="divide-line">参数配置</p>
         <el-form-item label="种群规模" prop="sizepop">
@@ -112,7 +155,9 @@
       </el-row> -->
     </el-form>
     <el-row class="mb20">
-      <el-button size="small" @click="setDefault" round>生成参数</el-button>
+      <el-button v-show="false" size="small" @click="setDefault" round
+        >生成参数</el-button
+      >
     </el-row>
     <el-row class="mb40">
       <el-button
@@ -201,41 +246,20 @@ export default {
       parama: {
         id: null, // 节点ID
         n: 0, //客户数，
-        q: null, //大车载货量
-        smallq: 6,
+        carTypes: 1,
+        dynamic: [
+          {
+            carring: '',
+            key: Date.now,
+            pailiang: '',
+          },
+        ], //表单用到的
         maxroad: null, //最大里程数
-        isTime: false,
-        model: '',
+        maxCarring: [], //计算需要用到的
+        speed: '',
       },
       rules: {
         id: [{ required: true, message: '请选择地图数据', trigger: 'change' }],
-        // m: [
-        //   { required: true, message: '请输入车数量', trigger: 'change' },
-        //   {
-        //     pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
-        //     message: '请输入合法的数字',
-        //     trigger: 'change',
-        //   },
-        //   { validator: zeroCheck, trigger: 'change' },
-        // ],
-        q: [
-          { required: true, message: '请输入大车载货量', trigger: 'change' },
-          {
-            pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
-            message: '请输入合法的数字，最多两位小数',
-            trigger: 'change',
-          },
-          { validator: zeroCheck, trigger: 'change' },
-        ],
-        smallq: [
-          { required: true, message: '请输入小车载货量', trigger: 'change' },
-          {
-            pattern: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,2})?$/,
-            message: '请输入合法的数字，最多两位小数',
-            trigger: 'change',
-          },
-          { validator: zeroCheck, trigger: 'change' },
-        ],
         maxroad: [
           { required: true, message: '请输最大里程数', trigger: 'change' },
           {
@@ -245,20 +269,18 @@ export default {
           },
           { validator: zeroCheck, trigger: 'change' },
         ],
-        // sizepop: [
-        //   { required: true, message: '请输种群规模', trigger: 'change' },
-        //   { validator: zeroCheck, trigger: 'change' },
-        // ],
-        // maxgen: [
-        //   { required: true, message: '请输迭代次数', trigger: 'change' },
-        //   { validator: zeroCheck, trigger: 'change' },
-        // ],
+        carTypes: [
+          { required: true, message: '请输最大里程数', trigger: 'change' },
+
+          { validator: zeroCheck, trigger: 'change' },
+        ],
       },
       optionList: [],
       isLoading: false,
       calcResult: {}, //处理后的计算结果
       graphData: {},
       calcPercentage: 1,
+      typesNum: 1, //记录当前车辆种类数
     }
   },
   created() {
@@ -282,8 +304,6 @@ export default {
         this.optionList = optionList
       }
     })
-
-    //进度条测试
   },
   watch: {
     parama: {
@@ -333,6 +353,14 @@ export default {
               interval = setInterval(after50, 400)
             }
           }, 200)
+          //处理计算用到的各车型载重上限数组
+          let maxCarringArr = []
+          this.parama.dynamic.forEach((item) =>
+            maxCarringArr.push(Number(item.carring))
+          )
+          this.parama.maxCarring = maxCarringArr
+          this.parama.maxroad = Number(this.parama.maxroad)
+          console.log(this.parama)
           //开始计算
           this.$axios
             .post('/calc', this.parama)
@@ -354,10 +382,14 @@ export default {
                   type: 'error',
                 })
                 this.isLoading = false
+                this.calcPercentage = 0
+                this.isStartCalc = false
               }
             })
             .catch((error) => {
               this.isLoading = false
+              this.calcPercentage = 0
+              this.isStartCalc = false
               console.log(error)
             })
         } else {
@@ -371,11 +403,13 @@ export default {
       let exInfo = []
       let tempdis = data.distance
       let tempwei = data.weight
+      let tempCarType = data.weightType[0]
       tempdis.forEach((item, index) => {
         exInfo.push({
           name: `车${index + 1}`,
           distance: item.toFixed(3),
           weight: tempwei[index].toFixed(3),
+          carType: tempCarType[index],
         })
       })
       this.graphData.exInfo = exInfo
@@ -488,6 +522,34 @@ export default {
     },
     progressDone(per) {
       return per === 100 ? '计算完成' : `${per}%`
+    },
+    typeChange(val) {
+      if (Number(val) > Number(this.typesNum)) {
+        //新增种类
+        let d = val - this.typesNum
+        for (let i = 0; i < d; i++) {
+          this.parama.dynamic.push({
+            carring: '',
+            key: Date.now,
+            pailiang: '',
+          })
+        }
+      } else if (Number(val) < Number(this.typesNum)) {
+        let d = this.typesNum - val
+        let len = this.parama.dynamic.length
+        this.parama.dynamic.splice(len - 1 - d, d)
+      } else {
+        console.log('=')
+      }
+
+      this.typesNum = val
+    },
+    zeroCheck(rule, value, callback) {
+      if (value == 0) {
+        return callback(new Error('不能为0'))
+      } else {
+        callback()
+      }
     },
   },
 }
