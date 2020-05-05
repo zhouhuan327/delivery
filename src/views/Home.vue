@@ -12,8 +12,8 @@ export default {
     return {}
   },
   components: {
-    Graph
-  }
+    Graph,
+  },
 }
 </script>
 

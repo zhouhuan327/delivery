@@ -103,6 +103,7 @@ export default {
     exportExcel(scope) {
       let calcResult = scope.row.resultData.calcResult
       let parama = scope.row.resultData.parama
+      console.log(parama)
       exportResultExcel(calcResult, parama)
     },
   },

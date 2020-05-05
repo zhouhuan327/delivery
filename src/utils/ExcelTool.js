@@ -41,21 +41,26 @@ const exportResultExcel = (calcResult, parama) => {
             let paramaTable = []
             paramaTable.push({
                 A: '客户数',
-                B: '大车载货量',
-                C: '小车载货量',
-                D: '最大里程数',
+                B: '里程上限',
+                C: '最高车速',
+                D: '车辆种类',
+                E: "车辆信息[载货量，排量]"
             })
+            let carInfo = ''
+            parama.dynamic.forEach(item => carInfo += `[${item.carring},${item.pailiang}]`)
+            console.log(carInfo)
             paramaTable.push({
                 A: parama.n,
-                B: parama.q,
-                C: parama.smallq,
-                D: parama.maxroad,
+                B: parama.maxroad,
+                C: parama.speed,
+                D: parama.carTypes,
+                E: carInfo
             })
             const paramaWs = XLSX.utils.json_to_sheet(paramaTable, {
                 header: ['A', 'B', 'C', 'D'],
                 skipHeader: true
             })
-            paramaWs['!cols'] = [{ width: 15 }, { width: 15 }, { width: 15 }, { width: 15 }]
+            paramaWs['!cols'] = [{ width: 15 }, { width: 15 }, { width: 15 }, { width: 15 }, { width: 35 }]
             XLSX.utils.book_append_sheet(mapWb, paramaWs, '参数')
 
             let calcResTable = []
