@@ -375,7 +375,7 @@ export default {
           let distanceData = []
           let qtdata = []
           jsonData.some((item) => {
-            if (item.name == '需求量') {
+            if (item.name == 'T') {
               return true
             }
             distanceData.push(item)

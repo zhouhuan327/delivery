@@ -173,9 +173,13 @@ export default {
     },
     deleteRow(scope, row) {
       console.log(scope)
-      this.$alert('确定吗确定吗', '删除', {
+
+      this.$confirm('确定删除吗?', '提示', {
         confirmButtonText: '确定',
-        callback: () => {
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
+        .then(() => {
           const item = {
             id: scope.row.id,
           }
@@ -193,10 +197,14 @@ export default {
               i = index
             }
           })
-
           row.splice(i, 1)
-        },
-      })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消',
+          })
+        })
     },
     exportExcel(scope) {
       console.log('export data row', scope.row)
